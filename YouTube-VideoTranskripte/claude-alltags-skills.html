@@ -1,0 +1,411 @@
+<meta charset="utf-8">
+<title>Acht Claude-Skills für den Alltag</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EDEEE8;
+  --paper-raised:#F7F7F3;
+  --ink:#1B1D1F;
+  --ink-soft:#4C4E47;
+  --ink-faint:#5E6058;
+  --line:#D4D5CA;
+  --line-strong:#B9BBAE;
+  --accent:#B5652F;
+  --accent-deep:#7C401D;
+  --accent-soft:#F0DFC9;
+  --accent-2:#2F6E64;
+  --accent-2-soft:#DCEAE4;
+  --code-bg:#1B1D1F;
+  --code-fg:#EDEEE8;
+  --code-accent:#E3A15C;
+  --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(27,29,31,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+    --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+    --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+    --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+    --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+    --shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+  --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+  --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+  --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+  --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(0,0,0,0.4);
+}
+
+*{box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.65;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+@media (max-width:480px){ .wrap{padding:2rem 1rem 4rem;} }
+
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--accent-deep);display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+h1{font-family:'IBM Plex Serif',Georgia,serif;font-weight:600;font-size:34px;line-height:1.18;text-wrap:balance;margin:0.5rem 0 0.6rem;letter-spacing:-0.01em;}
+h2{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:20px;margin:0;text-wrap:balance;}
+h3{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:16px;margin:0;}
+
+.source-card{display:flex;align-items:center;gap:0.9rem;margin:0 0 1.75rem;}
+.source-thumb{flex:none;width:128px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:0.5px solid var(--line);display:block;}
+@media (max-width:480px){ .source-thumb{width:96px;} }
+.source-line{font-size:14.5px;color:var(--ink-soft);margin:0;}
+.source-line a{color:var(--accent-deep);text-decoration:none;border-bottom:0.5px solid currentColor;}
+.source-line a:hover{color:var(--accent);}
+
+.lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin:0 0 2.25rem;}
+
+.install-pattern{
+  background:var(--paper-raised);
+  border:0.5px solid var(--line);
+  border-left:2px solid var(--accent);
+  border-radius:0 10px 10px 0;
+  padding:0.9rem 1.1rem;
+  font-size:15px;
+  color:var(--ink-soft);
+  margin-bottom:1.25rem;
+}
+.install-pattern strong{color:var(--ink);font-weight:500;}
+.install-pattern code{
+  font-family:'IBM Plex Mono',monospace;
+  background:var(--code-bg);
+  color:var(--code-accent);
+  padding:1px 6px;
+  border-radius:4px;
+  font-size:13px;
+}
+.install-pattern ol{margin:0.5rem 0 0;padding-left:1.2rem;}
+.install-pattern li{margin-bottom:0.2rem;}
+
+.downloadbox{
+  font-size:14.5px;color:var(--ink-soft);margin-bottom:2.5rem;
+}
+.downloadbox a{color:var(--accent-deep);text-decoration:none;border-bottom:0.5px solid currentColor;}
+
+/* TOC */
+.toc{
+  border-top:0.5px solid var(--line-strong);
+  border-bottom:0.5px solid var(--line-strong);
+  padding:1rem 0;
+  margin-bottom:2.75rem;
+}
+.toc-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  margin-bottom:0.6rem;
+}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;}
+@media (max-width:520px){ .toc-grid{grid-template-columns:1fr;} }
+.toc-grid a{display:flex;align-items:baseline;gap:8px;font-size:14.5px;color:var(--ink-soft);text-decoration:none;padding:4px 0;}
+.toc-grid a:hover{color:var(--accent-deep);}
+.toc-grid .n{font-family:'IBM Plex Mono',monospace;color:var(--accent-deep);font-size:12.5px;width:1.2em;flex:none;}
+
+/* Entries */
+.entry{padding:1.5rem 0;border-top:0.5px solid var(--line);scroll-margin-top:1rem;}
+.entry:first-of-type{border-top:none;}
+
+.entry-head{display:flex;align-items:flex-start;gap:0.85rem;margin-bottom:0.9rem;}
+.entry-num{
+  font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent-deep);background:var(--accent-soft);
+  width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:2px;
+}
+.entry-num.bonus{color:var(--accent-2);background:var(--accent-2-soft);}
+.entry-titles{flex:1;min-width:0;}
+.entry-meta{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap;}
+.kind{
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.05em;text-transform:uppercase;
+  padding:3px 7px;border-radius:5px;background:var(--accent-soft);color:var(--accent-deep);
+}
+.kind.bonus{background:var(--accent-2-soft);color:var(--accent-2);}
+
+.entry-body{display:grid;gap:0.75rem;padding-left:calc(28px + 0.85rem);}
+@media (max-width:480px){ .entry-body{padding-left:14px;} }
+.field{display:grid;gap:0.3rem;}
+.field-label{
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-faint);
+}
+.field p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-soft);max-width:64ch;}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--line-strong);font-size:13.5px;color:var(--ink-faint);}
+footer a{color:var(--accent-deep);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Selbststudium-Zusammenfassung des YouTube-Videos „Die Besten Claude-Skills, die ich täglich nutze (zum Kopieren)": acht Alltags-Skills für Claude mit Aufruf-Befehl, Funktionsweise und Installationsanleitung.</h2>
+
+  <p class="eyebrow">Selbststudium &middot; Video-Transkript</p>
+  <h1>Acht Claude-Skills für den Alltag &mdash; ohne Coding</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/fbwjpWjFoz0" target="_blank" rel="noopener">
+      <img class="source-thumb" src="data:image/jpeg;base64,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XkmvJBKKNeSa8kEoo15JryQSijXkmvJAKo5WN+So6/JVGkXATyC53j8Arh45leaxjGqqjxaohiZEWtLbZmm/zQea0/lLXD/Lp/RPvXG8uMuq9M4M7JY9oHjmVYPHMrxXynr/AKun9F3vU/Kiv+rp/Rd70+9gfj8j2weOblOccyvEfKmv+rp/Rd70+VVf9XT+i73p97BPxuR7UvHMrxu2FQyWviiabmJnhdhPDzW86wy7TYjIwtaYoyfpMZr6yVx3Oc9xc5xc5xuSTckrny8symo7cPBljl2yVREXmesUKVCoKFKIiFPFQrNQNyIiqAQoFKCFIUJuQSdyhLogIiIIKlCiKIiIgiIgIiICIiCURFRClCighOKKOKDrqCpKgrzPYqV0tnp2w4nlebCVhaP3rgj8CuaVUhbwy65SufJh3xuL6AHjtVs7e1eMixvEIWBvSMkA3GRtz5xZX+UOIcoPQPvX0J9TxvlX6Plj2GcdqZ29q8f8osQ8WD0D71HyjxDxYPQPvT8jjPxOV7HO3tTO3tXjvlHiHi0/oH3qPlJiHi0/oH3p+Rxp+JyvZZ29qZ29q8b8pMQ8Wn9A+9R8pcQ8Wn9A+9X7+B+LyPZ529qZ29q8Z8pcQ8Wn9A+9R8psQ8Wn9A+9Pv4H4vI9pnb2pnb2rxfymxDxaf0D70+U+IeLT+gfen38D8Xke0zt7VUub2rxnynxDxaf0D71rVmN19ZEYpJGsjcLObGLX8u9S8+H6J9LyW+WLGKhlVitTNGbsc6zTzAAF/UtJSi8du7t9GTU0hERBCKVCAoUqEQUKVCAoUqFQUKVCIkaqUClWIKCilBAUqNylBCIiAN6IN6ICcUTigFEKICKUVEIpRQQilFQREQERFAREVEKFKgqDsFVK0evS+KzzFOuyeKzzFcOlen7mLdKqVp9ck8VvmTrknit8yvSp9yNtQtTrcnJvmTrT+TfMr1qd42lC1utP5NUdZfyanWp3jZULX6w/k1R1h/JqvWnaNhQsHWH8gnTu5BNVO0ZlCw9M7kE6Z3IK6p2jKixdM7kFHSu5BNJuMqLF0ruQTpDyCaNxkRY+kPIJ0h7FdJtdQqZz2JnPYmja6hVznsTMexE2soVcxTMUNrKFGYpdBKhLqLqolQiIJ4KQououqLIoul02iUUXS6CyhRmS6bEhFF0uglBvUXS6CSii6XQWRVumYpsWUKMxS6bFlCi6XTYsirdMxQSpVcyXKCyKtymZBKgpdLoqERFAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREH//2Q==" alt="Video-Vorschaubild: Die Besten Claude-Skills, die ich täglich nutze (zum Kopieren)">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/fbwjpWjFoz0" target="_blank" rel="noopener">„Die Besten Claude-Skills, die ich täglich nutze (zum Kopieren)"</a>
+      &middot; Unfairer Vorteil | KI &middot; 7 Min &middot; automatisch transkribiert
+    </p>
+  </div>
+  <p class="lede">
+    Ein Skill ist eine Anleitung, die Claude einmal lernt und nie wieder vergisst &mdash; wie ein neuer Mitarbeiter, dem man einmal erklärt, wie eine Aufgabe erledigt wird. Diese acht Skills drehen sich nicht um Programmieren, sondern um Alltag und Büroarbeit: Mails, Verträge, Texte, Rechnungen. Alle sind auf Deutsch und werden nach der Installation einfach per Slash-Befehl im Chat aufgerufen.
+  </p>
+
+  <div class="install-pattern">
+    <strong>Installation (zwei Wege, gleiches Pack):</strong>
+    <ol>
+      <li><strong>Claude Desktop App / Cowork:</strong> Cowork-Tab &rarr; <code>Customize</code> &rarr; <code>Persönliche Plugins</code> &rarr; <code>+ Plugin erstellen</code> &rarr; <code>Plugin hochladen</code> &rarr; ZIP-Datei auswählen. Cowork ruft danach jeden Skill eigenständig auf.</li>
+      <li><strong>Normaler Claude-Chat:</strong> Profil (unten links) &rarr; <code>Fähigkeiten</code> &rarr; runterscrollen &rarr; Button <code>anpassen</code> &rarr; <code>+</code> &rarr; <code>Skill erstellen</code> &rarr; <code>Skill hochladen</code> &rarr; Datei per Drag&nbsp;&amp;&nbsp;Drop, einmal pro Skill wiederholen.</li>
+    </ol>
+  </div>
+  <p class="downloadbox">
+    Alle acht Skills gibt es fertig gepackt als kostenloses ZIP-Plugin (inkl. Readme):
+    <a href="https://unfairer-vorteil.net/#downloads" target="_blank" rel="noopener">unfairer-vorteil.net/#downloads</a>
+  </p>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Inhalt</p>
+    <div class="toc-grid">
+      <a href="#s1"><span class="n">01</span>Skill Creator</a>
+      <a href="#s2"><span class="n">02</span>KI-Spuren entfernen</a>
+      <a href="#s3"><span class="n">03</span>Morgen-Briefing</a>
+      <a href="#s4"><span class="n">04</span>Recherche (schnell & tief)</a>
+      <a href="#s5"><span class="n">05</span>Meeting-Notizen</a>
+      <a href="#s6"><span class="n">06</span>Heikles Gespräch</a>
+      <a href="#s7"><span class="n">07</span>Vertrag prüfen</a>
+      <a href="#s8"><span class="n">08</span>Komprimieren</a>
+      <a href="#s9"><span class="n">09</span>Rechnung erstellen (Bonus)</a>
+    </div>
+  </nav>
+
+  <section class="entries">
+
+    <article class="entry" id="s1">
+      <div class="entry-head">
+        <span class="entry-num">01</span>
+        <div class="entry-titles">
+          <h2>Skill Creator</h2>
+          <div class="entry-meta"><span class="kind">Skill &middot; Anthropic</span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Der Meta-Skill, mit dem sich alle anderen Skills bauen und bestehende modifizieren lassen. Sobald eine Aufgabe zum dritten Mal auftaucht, wird daraus ein wiederverwendbarer Skill statt sie jedes Mal neu zu erklären.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Am Ende entsteht eine fertige Datei, die sich teilen und installieren lässt &mdash; offiziell im Anthropic-Skills-Verzeichnis gepflegt.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Link</span>
+          <p><a href="https://github.com/anthropics/skills" target="_blank" rel="noopener" style="color:var(--accent-deep);">github.com/anthropics/skills</a></p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s2">
+      <div class="entry-head">
+        <span class="entry-num">02</span>
+        <div class="entry-titles">
+          <h2>KI-Spuren entfernen (Humanizer)</h2>
+          <div class="entry-meta"><span class="kind">Skill</span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Deutsche Adaption des bekannten englischen „Humanizer"-Skills. Macht KI-Texte spürbar menschlicher, damit Chef oder Kunde nicht sofort merken, dass ein Text mit KI geschrieben wurde &mdash; laut Video der meistgenutzte Skill überhaupt.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Aufruf</span>
+          <p><span style="font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);padding:1px 6px;border-radius:4px;font-size:13px;">/spuren-entfernen</span></p>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Entfernt typische KI-Muster wie endlose Aufzählungen, doppelte Verneinungen und generische Sätze.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Link</span>
+          <p>Original auf Englisch: <a href="https://github.com/blader/humanizer" target="_blank" rel="noopener" style="color:var(--accent-deep);">github.com/blader/humanizer</a></p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s3">
+      <div class="entry-head">
+        <span class="entry-num">03</span>
+        <div class="entry-titles">
+          <h2>Morgen-Briefing</h2>
+          <div class="entry-meta"><span class="kind">Skill</span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Ersetzt das morgendliche Durchklicken diverser Apps &mdash; laut Video rund 30 Minuten &mdash; durch einen einzigen Klick beim ersten Kaffee.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Aufruf</span>
+          <p><span style="font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);padding:1px 6px;border-radius:4px;font-size:13px;">/morgen-briefing</span></p>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Scannt Mails, Kalender und relevante News und erzeugt daraus ein sauberes HTML-Dashboard im Browser: was heute ansteht, wer auf eine Antwort wartet, was wichtig ist.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s4">
+      <div class="entry-head">
+        <span class="entry-num">04</span>
+        <div class="entry-titles">
+          <h2>Recherche &mdash; schnell und tief</h2>
+          <div class="entry-meta"><span class="kind">2 Skills</span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Recherche ist zweierlei: mal ein schneller Fakten-Check, mal ein echter Deep Dive. Dafür gibt es zwei getrennte Skills statt eines Kompromisses.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Aufruf</span>
+          <p>
+            <span style="font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);padding:1px 6px;border-radius:4px;font-size:13px;">/schnellrecherche</span>
+            für den schnellen Überblick &middot;
+            <span style="font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);padding:1px 6px;border-radius:4px;font-size:13px;">/rechercheberich</span>
+            für die Tiefenrecherche
+          </p>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Die Tiefenrecherche liefert kein Kurzantwort-Snippet, sondern ein echtes Dokument mit gegengecheckten Quellen, den neuesten Infos zuerst und explizit markierten widersprüchlichen Meinungen &mdash; genutzt z.&nbsp;B. für größere Kaufentscheidungen oder Videorecherche.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s5">
+      <div class="entry-head">
+        <span class="entry-num">05</span>
+        <div class="entry-titles">
+          <h2>Meeting-Notizen</h2>
+          <div class="entry-meta"><span class="kind">Skill</span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Tools wie AI Notion oder Google Gemini protokollieren Calls automatisch &mdash; das Ergebnis ist aber ein rohes Protokoll, das mühsam durchgelesen werden muss.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Verwandelt das rohe Protokoll in sauber strukturierte Notizen mit Entscheidungen, konkreten Handlungsanweisungen, Deadlines und offenen Fragen &mdash; nach jedem Meeting weiß jeder, was zu tun ist.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s6">
+      <div class="entry-head">
+        <span class="entry-num">06</span>
+        <div class="entry-titles">
+          <h2>Heikles Gespräch</h2>
+          <div class="entry-meta"><span class="kind">Skill</span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Persönlicher Favorit im Video: Vorbereitung auf unangenehme Gespräche wie Gehaltsverhandlungen, Absagen oder kritisches Feedback &mdash; mit über 90&nbsp;% Vorbereitungsanteil durch Claude.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Liefert das passende Mindset, Strategien für den Umgang mit Widerstand und bei Bedarf komplette Gesprächsleitfäden.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s7">
+      <div class="entry-head">
+        <span class="entry-num">07</span>
+        <div class="entry-titles">
+          <h2>Vertrag prüfen</h2>
+          <div class="entry-meta"><span class="kind">Skill</span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Ein kleiner Mini-Anwalt für AGBs und Alltagsverträge, die man ständig unterschreibt, ohne sie wirklich zu lesen.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Aufruf</span>
+          <p><span style="font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);padding:1px 6px;border-radius:4px;font-size:13px;">/vertrag-prüfen</span></p>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Scannt den Vertrag und markiert Red Flags, fehlende Klauseln oder Punkte, bei denen Vorsicht geboten ist. Ausdrücklicher Hinweis aus dem Video: keine Rechtsberatung &mdash; bei Miet-, Arbeits- oder Firmenverträgen gehört das zur echten Anwaltskanzlei.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s8">
+      <div class="entry-head">
+        <span class="entry-num">08</span>
+        <div class="entry-titles">
+          <h2>Komprimieren</h2>
+          <div class="entry-meta"><span class="kind">Skill</span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Lange Chats mit Claude gehen stark aufs Nutzungslimit &mdash; irgendwann hängt Claude oder man wird limitiert.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Nimmt einen langen Chat, komprimiert ihn, behält aber den Kontext vollständig &mdash; kein Informationsverlust, aber deutlich geringerer Verbrauch des Nutzungslimits.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s9">
+      <div class="entry-head">
+        <span class="entry-num bonus">B</span>
+        <div class="entry-titles">
+          <h2>Rechnung erstellen</h2>
+          <div class="entry-meta"><span class="kind bonus">Bonus-Skill</span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Ersetzt Word-Vorlagen oder eine separate Buchhaltungssoftware für die einfache Rechnungserstellung.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Angaben eingeben, Claude erzeugt daraus eine saubere, rechtskonforme PDF-Rechnung &mdash; direkt im Chat.</p>
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <footer>
+    Weiterführende Links aus der Videobeschreibung: <a href="https://resources.anthropic.com" target="_blank" rel="noopener">Anthropic Skill Guide</a> &middot; <a href="https://code.claude.com/docs/de/skills" target="_blank" rel="noopener">Skills-Dokumentation</a>
+    &middot; ursprünglicher Upload: 25.04.2026 &middot; <a href="https://youtu.be/fbwjpWjFoz0" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>

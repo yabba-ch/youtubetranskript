@@ -1,0 +1,356 @@
+<meta charset="utf-8">
+<title>Zwanzig Claude-Code-Tricks</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EDEEE8;
+  --paper-raised:#F7F7F3;
+  --ink:#1B1D1F;
+  --ink-soft:#4C4E47;
+  --ink-faint:#5E6058;
+  --line:#D4D5CA;
+  --line-strong:#B9BBAE;
+  --accent:#B5652F;
+  --accent-deep:#7C401D;
+  --accent-soft:#F0DFC9;
+  --accent-2:#2F6E64;
+  --accent-2-soft:#DCEAE4;
+  --code-bg:#1B1D1F;
+  --code-fg:#EDEEE8;
+  --code-accent:#E3A15C;
+  --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(27,29,31,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+    --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+    --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+    --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+    --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+    --shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+  --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+  --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+  --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+  --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(0,0,0,0.4);
+}
+
+*{box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.65;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+@media (max-width:480px){ .wrap{padding:2rem 1rem 4rem;} }
+
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--accent-deep);display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+h1{font-family:'IBM Plex Serif',Georgia,serif;font-weight:600;font-size:34px;line-height:1.18;text-wrap:balance;margin:0.5rem 0 0.6rem;letter-spacing:-0.01em;}
+h2{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:19px;margin:0;text-wrap:balance;}
+h3{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 0.9rem;}
+
+.source-card{display:flex;align-items:center;gap:0.9rem;margin:0 0 1.75rem;}
+.source-thumb{flex:none;width:128px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:0.5px solid var(--line);display:block;}
+@media (max-width:480px){ .source-thumb{width:96px;} }
+.source-line{font-size:14.5px;color:var(--ink-soft);margin:0;}
+.source-line a{color:var(--accent-deep);text-decoration:none;border-bottom:0.5px solid currentColor;}
+.source-line a:hover{color:var(--accent);}
+
+.lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin:0 0 2rem;}
+
+.kontextbox{
+  background:var(--paper-raised);border:0.5px solid var(--line);border-left:2px solid var(--accent-2);
+  border-radius:0 10px 10px 0;padding:0.9rem 1.1rem;font-size:15px;color:var(--ink-soft);margin-bottom:2.75rem;
+}
+.kontextbox strong{color:var(--ink);font-weight:500;}
+
+.toc{border-top:0.5px solid var(--line-strong);border-bottom:0.5px solid var(--line-strong);padding:1rem 0;margin-bottom:3rem;}
+.toc-label{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.6rem;}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;}
+@media (max-width:520px){ .toc-grid{grid-template-columns:1fr;} }
+.toc-grid a{display:flex;align-items:baseline;gap:8px;font-size:14.5px;color:var(--ink-soft);text-decoration:none;padding:4px 0;}
+.toc-grid a:hover{color:var(--accent-deep);}
+.toc-grid .n{font-family:'IBM Plex Mono',monospace;color:var(--accent-deep);font-size:12.5px;width:1.4em;flex:none;}
+
+.cluster{margin-bottom:2.75rem;}
+.cluster-head{display:flex;align-items:baseline;gap:10px;margin-bottom:1.1rem;padding-bottom:0.6rem;border-bottom:0.5px solid var(--line-strong);}
+.cluster-head h2{flex:1;}
+.cluster-range{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);}
+
+.trick{display:grid;grid-template-columns:36px 1fr;gap:0.85rem;padding:1rem 0;border-top:0.5px solid var(--line);scroll-margin-top:1rem;}
+.trick:first-child{border-top:none;}
+.trick-num{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--accent-deep);background:var(--accent-soft);
+  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;
+}
+@media (max-width:480px){
+  .trick{grid-template-columns:30px 1fr;gap:0.65rem;}
+  .trick-num{width:26px;height:26px;font-size:11.5px;border-radius:7px;}
+}
+.trick-title{font-size:16px;font-weight:500;margin:0 0 0.35rem;color:var(--ink);}
+.trick p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-soft);max-width:64ch;}
+.trick p + p{margin-top:0.5rem;}
+
+.inline-code{
+  font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);
+  padding:1px 6px;border-radius:4px;font-size:13.5px;
+}
+.promptquote{
+  background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:0.65rem 0.8rem;
+  font-family:'IBM Plex Mono',monospace;font-size:13.5px;line-height:1.6;margin:0.55rem 0 0;box-shadow:var(--shadow);overflow-x:auto;
+}
+.promptquote .prompt{color:var(--code-muted);}
+.promptquote .cmd{color:var(--code-accent);}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--line-strong);font-size:13.5px;color:var(--ink-faint);}
+footer a{color:var(--accent-deep);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Selbststudium-Zusammenfassung des YouTube-Videos „Diese 20 Claude Code Tricks sparen dir Stunden" von Julian Ivanov, gegliedert in vier Themenblöcke mit allen 20 Tricks, Befehlen und Prompt-Beispielen.</h2>
+
+  <p class="eyebrow">Selbststudium &middot; Video-Transkript</p>
+  <h1>Zwanzig Gewohnheiten, die Claude Code spürbar besser machen</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/AwKjofI03Ms" target="_blank" rel="noopener">
+      <img class="source-thumb" src="data:image/jpeg;base64,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" alt="Video-Vorschaubild: Diese 20 Claude Code Tricks sparen dir Stunden">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/AwKjofI03Ms" target="_blank" rel="noopener">„Diese 20 Claude Code Tricks sparen dir Stunden"</a>
+      &middot; Julian Ivanov | KI-Automatisierung &middot; 24 Min &middot; automatisch transkribiert
+    </p>
+  </div>
+  <p class="lede">
+    Keine komplizierten Techniken, sondern einfache Gewohnheiten für Prompting, Projekt-Setup und größere Multi-Schritt-Aufgaben. Funktioniert gleichermaßen im Terminal, in der Desktop-App und im VS-Code-Plugin.
+  </p>
+
+  <div class="kontextbox">
+    <strong>Warum das meiste hier ums Kontextfenster kreist:</strong> Jedes Modell verarbeitet nur eine begrenzte Menge Tokens gleichzeitig (Opus 4.7: ca. 1&nbsp;Mio. Tokens / ~750.000 Wörter). Je voller dieses Kurzzeitgedächtnis, desto schlechter die Antwortqualität &mdash; der Effekt heißt <em>Context Rot</em>. Ein großer Teil der 20 Tricks dient nur einem Ziel: das Kontextfenster sauber und fokussiert zu halten.
+  </div>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Inhalt</p>
+    <div class="toc-grid">
+      <a href="#t1"><span class="n">01</span>Planmodus</a>
+      <a href="#t2"><span class="n">02</span>Frag bevor du baust</a>
+      <a href="#t3"><span class="n">03</span>Diskutieren statt kommandieren</a>
+      <a href="#t4"><span class="n">04</span>Autoaccept + Permissions</a>
+      <a href="#t5"><span class="n">05</span>Sprechen statt tippen</a>
+      <a href="#t6"><span class="n">06</span>/init &mdash; Projekt einlernen</a>
+      <a href="#t7"><span class="n">07</span>CLAUDE.md pflegen</a>
+      <a href="#t8"><span class="n">08</span>Escape &mdash; Notbremse & Rewind</a>
+      <a href="#t9"><span class="n">09</span>File Mentions (@)</a>
+      <a href="#t10"><span class="n">10</span>Screenshots geben</a>
+      <a href="#t11"><span class="n">11</span>Selbst gegenchecken lassen</a>
+      <a href="#t12"><span class="n">12</span>Eine Aufgabe pro Session</a>
+      <a href="#t13"><span class="n">13</span>/context &mdash; Belegung prüfen</a>
+      <a href="#t14"><span class="n">14</span>/clear & /compact</a>
+      <a href="#t15"><span class="n">15</span>Custom Skills</a>
+      <a href="#t16"><span class="n">16</span>Modelle passend wählen</a>
+      <a href="#t17"><span class="n">17</span>Hooks & Benachrichtigung</a>
+      <a href="#t18"><span class="n">18</span>Subagenten & Agent Teams</a>
+      <a href="#t19"><span class="n">19</span>Ultrathink-Keyword</a>
+      <a href="#t20"><span class="n">20</span>Worktrees</a>
+    </div>
+  </nav>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Prompting-Grundhaltung</h2><span class="cluster-range">01&ndash;04</span></div>
+    <h3>Wie du eine Aufgabe überhaupt formulierst</h3>
+
+    <div class="trick" id="t1">
+      <span class="trick-num">01</span>
+      <div>
+        <p class="trick-title">Planmodus konsequent nutzen</p>
+        <p>Im Planmodus darf Claude nur lesen und analysieren, nichts ändern. Nutze ihn für echten Austausch: Feedback geben, Plan anpassen lassen, wiederholen &mdash; erst wenn der Plan wirklich passt, umschalten und loslegen lassen.</p>
+        <p>Sinnvoll vor allem bei neuen Projekten und größeren Änderungen an bestehendem Code. Spart massiv Korrekturschleifen und damit Tokens &mdash; relevant besonders auf dem Pro- statt Max-Plan.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t2">
+      <span class="trick-num">02</span>
+      <div>
+        <p class="trick-title">Frag bevor du baust</p>
+        <p>Bei größeren Funktionen gezielt zu Rückfragen auffordern, statt Claude sofort loslegen zu lassen:</p>
+        <div class="promptquote"><span class="prompt">&gt;</span> <span class="cmd">Stell mir Rückfragen, bis du dir absolut sicher bist, was ich will, und fang erst dann an.</span></div>
+      </div>
+    </div>
+
+    <div class="trick" id="t3">
+      <span class="trick-num">03</span>
+      <div>
+        <p class="trick-title">Diskutieren statt kommandieren</p>
+        <p>Claude nicht als Befehlsempfänger behandeln, sondern als Sparringspartner: Problem beschreiben statt fertige Lösung vorgeben. Statt <span class="inline-code">bau mir ein Kontaktformular mit Name, E-Mail, Telefon</span> lieber <span class="inline-code">wie sollte ein Kontaktformular aussehen, damit möglichst viele Leute es ausfüllen?</span> &mdash; Claude vergleicht dann Varianten und gibt eine Empfehlung, statt blind die Vorgabe umzusetzen.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t4">
+      <span class="trick-num">04</span>
+      <div>
+        <p class="trick-title">Autoaccept-Modus + Permissions-Datei</p>
+        <p>Als Standardmodus (außer im Planmodus) empfohlen: Claude fragt dann nicht bei jedem Befehl nach, sondern nur noch bei wirklich riskanten Aktionen (z.&nbsp;B. Dateien löschen). Für mehr Kontrolle zusätzlich eine <span class="inline-code">permissions.json</span> anlegen lassen, die festlegt, welche Befehle erlaubt sind &mdash; etwa um sensible Dateien wie <span class="inline-code">.env</span> komplett zu sperren.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Eingabe & Projektgedächtnis</h2><span class="cluster-range">05&ndash;10</span></div>
+    <h3>Wie Claude dein Projekt kennenlernt und behält</h3>
+
+    <div class="trick" id="t5">
+      <span class="trick-num">05</span>
+      <div>
+        <p class="trick-title">Sprechen statt tippen</p>
+        <p>Lange Prompts diktieren geht schneller und liefert oft mehr Kontext als Tippen. Terminal: einmalig <span class="inline-code">/voice</span> aktivieren. Desktop-App: eingebauter Diktier-Button. VS-Code-Plugin: vorhanden, aber eher für Englisch optimiert. Alternative systemweit (Mac/Windows, nicht nur Claude): externe Diktier-Tools wie Whisperflow.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t6">
+      <span class="trick-num">06</span>
+      <div>
+        <p class="trick-title">Claude mit /init aufs Projekt einlernen</p>
+        <p>Jede neue Session startet mit leerem Kontext &mdash; nur bestimmte Dateien werden automatisch geladen. <span class="inline-code">/init</span> lässt Claude den gesamten Projektordner scannen (Struktur, Dateien, Konventionen) und daraus eine <span class="inline-code">CLAUDE.md</span> erzeugen, die künftig bei jeder Session automatisch mitgeladen wird.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t7">
+      <span class="trick-num">07</span>
+      <div>
+        <p class="trick-title">CLAUDE.md aktiv pflegen</p>
+        <p>Wiederholte Fehler als Regel eintragen, projektspezifische Eigenheiten als Hinweis vermerken. Faustregel: unter 200 Zeilen halten, da die Datei bei jeder Session Tokens kostet. Umfangreichere Inhalte (z.&nbsp;B. Style-Guides) in eigene Dateien auslagern und in der CLAUDE.md nur referenzieren &mdash; Claude liest sie dann nur bei Bedarf.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t8">
+      <span class="trick-num">08</span>
+      <div>
+        <p class="trick-title">Notbremse & Rewind mit Escape</p>
+        <p>Einmal <span class="inline-code">Esc</span>: stoppt sofort die aktuelle Antwort oder Aktion, damit du einen besseren Prompt nachschieben kannst. Zweimal <span class="inline-code">Esc</span> hintereinander: rollt zu einem früheren Stand zurück &mdash; möglich, weil Claude vor jeder Dateiänderung automatisch einen Snapshot anlegt. Spart Tokens, weil nichts neu erklärt werden muss.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t9">
+      <span class="trick-num">09</span>
+      <div>
+        <p class="trick-title">File Mentions als Shortcut</p>
+        <p>Dateien mit <span class="inline-code">@Dateiname</span> direkt im Chat referenzieren. Claude bekommt den vollen Pfad sofort und muss nicht erst selbst im Projekt danach suchen.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t10">
+      <span class="trick-num">10</span>
+      <div>
+        <p class="trick-title">Screenshots und Bilder geben</p>
+        <p>Besonders bei Design-Aufgaben oft treffender als eine Textbeschreibung: Screenshot eines Designs, das dir gefällt, einfügen und sagen <span class="inline-code">bau mir das nach, aber mit meinen Farben und für mein Produkt</span>. Claude erkennt Layout-Logik, Design-Patterns und visuelle Hierarchie direkt aus dem Bild.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Qualität & Kontextfenster</h2><span class="cluster-range">11&ndash;14</span></div>
+    <h3>Wie du Fehler und Context Rot vermeidest</h3>
+
+    <div class="trick" id="t11">
+      <span class="trick-num">11</span>
+      <div>
+        <p class="trick-title">Claude sich selbst gegenchecken lassen</p>
+        <p>Claude legt bei größeren Aufgaben meist eine To-Do-Liste an. Verifikationsschritte explizit mit einbauen lassen: nach jeder Umsetzung erst prüfen, ob das Ergebnis passt, bevor es zum nächsten Punkt springt &mdash; spart weitere Korrekturschleifen.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t12">
+      <span class="trick-num">12</span>
+      <div>
+        <p class="trick-title">Eine Aufgabe pro Session</p>
+        <p>Bei einem komplett neuen Thema lieber einen neuen Chat starten statt weiterzuschreiben. Ein frisches Kontextfenster liefert spürbar bessere Antworten als ein mit Altlasten vollgeladenes.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t13">
+      <span class="trick-num">13</span>
+      <div>
+        <p class="trick-title">/context zur Belegungsprüfung</p>
+        <p><span class="inline-code">/context</span> schlüsselt auf, was das Kontextfenster gerade füllt: Memory, CLAUDE.md, geladene Dateien, MCP-Server, laufende Konversation. Darüber lässt sich gezielt Platz freimachen, z.&nbsp;B. indem ein gerade nicht benötigter MCP-Server entfernt wird.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t14">
+      <span class="trick-num">14</span>
+      <div>
+        <p class="trick-title">/clear und /compact gezielt einsetzen</p>
+        <p><span class="inline-code">/compact</span> fasst die bisherige Konversation zusammen und behält nur die Kernessenz &mdash; steuerbar mit einer Anweisung, was erhalten bleiben soll:</p>
+        <div class="promptquote"><span class="prompt">&gt;</span> <span class="cmd">/compact: behalte alle Entscheidungen zum Layout und meine Brandfarben</span></div>
+        <p>Claude macht das automatisch ab 90&nbsp;% Kontextfüllung &mdash; manuell schon bei ca. 70&nbsp;% sinnvoll, sobald ein neues Teilthema beginnt, aber noch Infos aus der bisherigen Konversation gebraucht werden. <span class="inline-code">/clear</span> leert das Kontextfenster komplett &mdash; passend bei einer völlig neuen Aufgabe ohne Bezug zum bisherigen Chat.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Skalieren & Automatisieren</h2><span class="cluster-range">15&ndash;20</span></div>
+    <h3>Für wiederkehrende und größere Multi-Schritt-Aufgaben</h3>
+
+    <div class="trick" id="t15">
+      <span class="trick-num">15</span>
+      <div>
+        <p class="trick-title">Custom Skills für wiederkehrende Aufgaben</p>
+        <p>Für regelmäßige Aufgaben (Brand-Voice-Check, Newsletter-Vorlage, Social-Media-Posts) statt jedes Mal neu zu erklären einen Skill anlegen: eine Markdown-Datei mit kurzer Beschreibung im Header und einer ausführlichen Anleitung darunter. Claude liest den passenden Skill automatisch aus, sobald die Aufgabe erkannt wird &mdash; z.&nbsp;B. einen LinkedIn-Skill mit dem eigenen Sprachstil.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t16">
+      <span class="trick-num">16</span>
+      <div>
+        <p class="trick-title">Modelle passend zur Aufgabe wählen</p>
+        <p>Drei Modelle zur Auswahl: <strong style="font-weight:500;color:var(--ink)">Haiku</strong> für einfache Aufgaben (z.&nbsp;B. eine E-Mail), <strong style="font-weight:500;color:var(--ink)">Sonnet</strong> für alltägliche Aufgaben, <strong style="font-weight:500;color:var(--ink)">Opus</strong> nur für wirklich schwierige, komplexe Aufgaben &mdash; verbraucht deutlich mehr Tokens. Wer durchgehend Opus für alles nutzt, erreicht Tages- oder Wochenlimit oft schon innerhalb einer Stunde.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t17">
+      <span class="trick-num">17</span>
+      <div>
+        <p class="trick-title">Benachrichtigung per Hooks</p>
+        <p>Hooks sind kleine Skripte, die an festgelegten Punkten in Claudes Workflow automatisch ausgeführt werden (z.&nbsp;B. wenn Claude stoppt oder eine Datei bearbeitet). Claude bitten, einen Hook anzulegen, der bei Fertigstellung einer Aufgabe einen Notification-Sound abspielt &mdash; praktisch, wenn währenddessen in anderen Tabs weitergearbeitet wird.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t18">
+      <span class="trick-num">18</span>
+      <div>
+        <p class="trick-title">Subagenten & Agent Teams</p>
+        <p><strong style="font-weight:500;color:var(--ink)">Subagent:</strong> temporärer Agent mit eigenem Kontextfenster für tokenintensive Teilaufgaben (z.&nbsp;B. Recherche) &mdash; entlastet das Hauptfenster, kommuniziert aber nur mit dem Hauptagenten. Eigene Subagenten lassen sich mit <span class="inline-code">/agents</span> anlegen.</p>
+        <p><strong style="font-weight:500;color:var(--ink)">Agent Team:</strong> mehrere Hauptagenten, die untereinander kommunizieren können (z.&nbsp;B. je einer für Backend, Frontend, Design) &mdash; muss per Variable aktiviert werden, verbraucht deutlich mehr Tokens, lohnt sich bei wirklich großen Aufgaben.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t19">
+      <span class="trick-num">19</span>
+      <div>
+        <p class="trick-title">Das Ultrathink-Keyword</p>
+        <p>Bei wirklich harten Problemen (große Architekturentscheidung, schwer zu findender Bug) das Wort <span class="inline-code">ultrathink</span> in den Prompt aufnehmen &mdash; wie der Planmodus, nur intensiver: Claude bekommt dann rund 32.000 Tokens allein fürs Nachdenken, bevor es antwortet. Alternativ lässt sich der Reasoning Effort auch direkt manuell hochstellen.</p>
+      </div>
+    </div>
+
+    <div class="trick" id="t20">
+      <span class="trick-num">20</span>
+      <div>
+        <p class="trick-title">Worktrees für parallele Sessions</p>
+        <p>Claude Code lässt sich nicht zweimal gleichzeitig im selben Projekt laufen lassen, ohne dass sich Sessions in die Quere kommen. Voraussetzung für Worktrees: das Projekt ist ein Git-Repository (notfalls von Claude anlegen lassen: <span class="inline-code">leg mir ein Git-Repository an</span>). Ein Worktree ist eine Arbeitskopie des Projekts in einem eigenen Ordner mit derselben Git-Historie &mdash; anlegen z.&nbsp;B. mit <span class="inline-code">leg mir ein Worktree für ein neues Feature an</span> oder per Worktree-Button in der Desktop-App. Bis zu vier parallele Terminals an vier verschiedenen Features sind so möglich; am Ende einfach zurückmergen lassen.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Zusammengefasst aus dem Video-Transkript für das Selbststudium &middot; ursprünglicher Upload: vor 4 Monaten &middot;
+    <a href="https://youtu.be/AwKjofI03Ms" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>

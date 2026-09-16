@@ -1,0 +1,323 @@
+<meta charset="utf-8">
+<title>WordPress-Design mit Claude & Elementor</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EDEEE8;
+  --paper-raised:#F7F7F3;
+  --ink:#1B1D1F;
+  --ink-soft:#4C4E47;
+  --ink-faint:#5E6058;
+  --line:#D4D5CA;
+  --line-strong:#B9BBAE;
+  --accent:#B5652F;
+  --accent-deep:#7C401D;
+  --accent-soft:#F0DFC9;
+  --accent-2:#2F6E64;
+  --accent-2-soft:#DCEAE4;
+  --code-bg:#1B1D1F;
+  --code-fg:#EDEEE8;
+  --code-accent:#E3A15C;
+  --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(27,29,31,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+    --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+    --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+    --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+    --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+    --shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+  --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+  --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+  --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+  --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(0,0,0,0.4);
+}
+
+*{box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.65;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+@media (max-width:480px){ .wrap{padding:2rem 1rem 4rem;} }
+
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--accent-deep);display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+h1{font-family:'IBM Plex Serif',Georgia,serif;font-weight:600;font-size:34px;line-height:1.18;text-wrap:balance;margin:0.5rem 0 0.6rem;letter-spacing:-0.01em;}
+h2{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:20px;margin:0;text-wrap:balance;}
+h3{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:16px;margin:0;}
+
+.source-card{display:flex;align-items:center;gap:0.9rem;margin:0 0 1.75rem;}
+.source-thumb{flex:none;width:128px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:0.5px solid var(--line);display:block;}
+@media (max-width:480px){ .source-thumb{width:96px;} }
+.source-line{font-size:14.5px;color:var(--ink-soft);margin:0;}
+.source-line a{color:var(--accent-deep);text-decoration:none;border-bottom:0.5px solid currentColor;}
+.source-line a:hover{color:var(--accent);}
+
+.lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin:0 0 2.25rem;}
+
+/* Tools */
+.tools{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:2.5rem;
+}
+@media (max-width:520px){ .tools{grid-template-columns:1fr;} }
+.tool-card{
+  background:var(--paper-raised);
+  border:0.5px solid var(--line);
+  border-radius:12px;
+  padding:1rem 1.15rem;
+}
+.tool-card .role{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color:var(--accent-deep);
+  display:block;
+  margin-bottom:0.3rem;
+}
+.tool-card h3{margin-bottom:0.35rem;}
+.tool-card p{font-size:14.5px;color:var(--ink-soft);margin:0;}
+
+/* TOC */
+.toc{
+  border-top:0.5px solid var(--line-strong);
+  border-bottom:0.5px solid var(--line-strong);
+  padding:1rem 0;
+  margin-bottom:2.75rem;
+}
+.toc-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  margin-bottom:0.6rem;
+}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;}
+@media (max-width:520px){ .toc-grid{grid-template-columns:1fr;} }
+.toc-grid a{display:flex;align-items:baseline;gap:8px;font-size:14.5px;color:var(--ink-soft);text-decoration:none;padding:4px 0;}
+.toc-grid a:hover{color:var(--accent-deep);}
+.toc-grid .n{font-family:'IBM Plex Mono',monospace;color:var(--accent-deep);font-size:12.5px;width:1.2em;flex:none;}
+.toc-grid .t{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);margin-left:auto;}
+
+/* Steps */
+.entry{padding:1.5rem 0;border-top:0.5px solid var(--line);scroll-margin-top:1rem;}
+.entry:first-of-type{border-top:none;}
+.entry-head{display:flex;align-items:flex-start;gap:0.85rem;margin-bottom:0.9rem;}
+.entry-num{
+  font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent-deep);background:var(--accent-soft);
+  width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:2px;
+}
+.entry-titles{flex:1;min-width:0;}
+.entry-meta{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap;}
+.timestamp{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-faint);}
+.timestamp a{color:inherit;text-decoration:none;border-bottom:0.5px dotted var(--ink-faint);}
+.timestamp a:hover{color:var(--accent-deep);border-color:var(--accent-deep);}
+
+.entry-body{display:grid;gap:0.75rem;padding-left:calc(28px + 0.85rem);}
+@media (max-width:480px){ .entry-body{padding-left:14px;} }
+.field{display:grid;gap:0.3rem;}
+.field-label{
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-faint);
+}
+.field p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-soft);max-width:64ch;}
+
+.promptquote{
+  background:var(--code-bg);color:var(--code-fg);border-radius:8px;padding:0.75rem 0.9rem;
+  font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:1.6;box-shadow:var(--shadow);
+  overflow-x:auto;white-space:pre-wrap;
+}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--line-strong);font-size:13.5px;color:var(--ink-faint);}
+footer a{color:var(--accent-deep);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Selbststudium-Zusammenfassung des YouTube-Videos "Build A WordPress Website in 2026 Using Claude & Elementor": ein KI-Workflow aus Google Stitch, ChatGPT, Claude und Elementor, um WordPress-Seiten ohne manuellen Page-Builder-Aufwand zu gestalten.</h2>
+
+  <p class="eyebrow">Selbststudium &middot; Video-Transkript</p>
+  <h1>WordPress-Design mit Claude &amp; Elementor bauen lassen</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/qAEYLONGDPs" target="_blank" rel="noopener">
+      <img class="source-thumb" src="data:image/jpeg;base64,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" alt="Video-Vorschaubild: Build A WordPress Website in 2026 Using Claude & Elementor">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/qAEYLONGDPs" target="_blank" rel="noopener">„Build A WordPress Website in 2026 Using Claude & Elementor (Free AI Tutorial)"</a>
+      &middot; incomtech &middot; 14 Min &middot; automatisch transkribiert (Englisch)
+    </p>
+  </div>
+  <p class="lede">
+    Vier kostenlose Tools im Zusammenspiel bauen eine komplette WordPress-Seite, ohne dass man selbst in Elementor herumklicken muss: Google Stitch entwirft das Design, ChatGPT schärft den Prompt dafür, Claude übersetzt das fertige Design in eine importierbare Elementor-Vorlage &mdash; Elementor übernimmt nur noch den Import und den Feinschliff.
+  </p>
+
+  <div class="tools">
+    <div class="tool-card">
+      <span class="role">Prompt</span>
+      <h3>ChatGPT</h3>
+      <p>Nimmt eine kurze, grobe Beschreibung der Wunsch-Website und macht daraus einen detaillierten, strukturierten Prompt für Google Stitch.</p>
+    </div>
+    <div class="tool-card">
+      <span class="role">Design</span>
+      <h3>Google Stitch</h3>
+      <p>Generiert aus dem Prompt ein komplettes Designsystem (Farben, Fonts, Buttons, Logo) plus fertige Unterseiten als Web-App-Entwurf.</p>
+    </div>
+    <div class="tool-card">
+      <span class="role">Umwandlung</span>
+      <h3>Claude</h3>
+      <p>Bekommt das Stitch-Designsystem (Markdown) und den Seitencode und baut daraus eine importierbare Elementor-JSON-Vorlage.</p>
+    </div>
+    <div class="tool-card">
+      <span class="role">Umsetzung</span>
+      <h3>Elementor</h3>
+      <p>WordPress-Page-Builder, der die JSON-Vorlage importiert &mdash; Feinschliff bei Abständen, Header und Footer bleibt manuell.</p>
+    </div>
+  </div>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Ablauf</p>
+    <div class="toc-grid">
+      <a href="#s1"><span class="n">01</span><span class="t">Guten Prompt schreiben</span></a>
+      <a href="#s2"><span class="n">02</span><span class="t">Design mit Stitch AI</span></a>
+      <a href="#s3"><span class="n">03</span><span class="t">Elementor-Vorlage mit Claude</span></a>
+      <a href="#s4"><span class="n">04</span><span class="t">Import in Elementor</span></a>
+      <a href="#s5"><span class="n">05</span><span class="t">Feinschliff</span></a>
+    </div>
+  </nav>
+
+  <section class="entries">
+
+    <article class="entry" id="s1">
+      <div class="entry-head">
+        <span class="entry-num">01</span>
+        <div class="entry-titles">
+          <h2>Einen guten Prompt schreiben</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/qAEYLONGDPs?t=60" target="_blank" rel="noopener">ab 1:00</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Ein grob formulierter Wunsch reicht meist nicht für ein gutes KI-Design. ChatGPT wird deshalb nur als Prompt-Verstärker genutzt, bevor der eigentliche Design-Prompt bei Google Stitch landet.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Beispiel-Prompt für ChatGPT</span>
+          <div class="promptquote">I am writing a prompt to design a website using Google Stitch. I want you to enhance my prompt, make it more detailed so the design will be perfect. Create a design for a website for a phone repair business called Phone Repair. Use modern light colors. I want you to design these pages: home, repair services, about us, contact. Every hero section should have an image background of full width with a darker overlay on which the title and paragraph for that page is displayed. I want you to include the following sections: reviews, visit us, why us, our expertise, and call to action.</div>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>ChatGPT liefert daraus einen ausführlichen, strukturierten Prompt zurück &mdash; inklusive Farbpalette, UI-Stil und exakter Seitenstruktur &mdash; der direkt in Google Stitch eingefügt wird.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s2">
+      <div class="entry-head">
+        <span class="entry-num">02</span>
+        <div class="entry-titles">
+          <h2>Design mit Google Stitch AI</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/qAEYLONGDPs?t=206" target="_blank" rel="noopener">ab 3:26</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Google Stitch übernimmt die komplette Gestaltungsarbeit &mdash; von der Farbwelt bis zu fertigen Unterseiten &mdash; ausgehend von einem einzigen Text-Prompt.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Beim Erstellen „Web" statt App auswählen, den ChatGPT-Prompt einfügen und generieren lassen. Stitch erzeugt ein Designsystem (Farben, Schriften, Button-Stile) samt Logo und alle angefragten Unterseiten (z.&nbsp;B. Home, Services, About, Contact) als fertige Entwürfe.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s3">
+      <div class="entry-head">
+        <span class="entry-num">03</span>
+        <div class="entry-titles">
+          <h2>Elementor-Vorlage mit Claude erzeugen</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/qAEYLONGDPs?t=338" target="_blank" rel="noopener">ab 5:38</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Warum</span>
+          <p>Der eigentliche Automatisierungsschritt: Claude übersetzt das visuelle Stitch-Design in eine Elementor-kompatible JSON-Vorlage, damit niemand die Seite von Hand in Elementor nachbauen muss.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Vorbereitung</span>
+          <p>In Stitch beim Designsystem auf „Edit" gehen und die <span style="font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);padding:1px 6px;border-radius:4px;font-size:13px;">design.md</span>-Datei kopieren. Danach die gewünschte Seite öffnen, „Export" &rarr; „Copy code to clipboard".</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Prompt für Claude</span>
+          <div class="promptquote">Create a JSON file for an Elementor website template based on the design system I have uploaded as a markdown file. The template must be for a home page. I also added the code for the home page to this prompt. Use that to create an Elementor JSON file that I can upload as a template.</div>
+        </div>
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Beide kopierten Inhalte (design.md und der exportierte Seitencode) zusammen mit dem Prompt in Claude einfügen. Claude erklärt kurz sein Vorgehen und liefert anschließend die vollständige JSON-Datei zum Kopieren.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s4">
+      <div class="entry-head">
+        <span class="entry-num">04</span>
+        <div class="entry-titles">
+          <h2>Import in Elementor</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/qAEYLONGDPs?t=462" target="_blank" rel="noopener">ab 7:42</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Funktionsweise</span>
+          <p>Die von Claude gelieferte JSON in eine Datei speichern (im Video z.&nbsp;B. per VS Code). In WordPress eine neue Seite mit Template <span style="font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);padding:1px 6px;border-radius:4px;font-size:13px;">Elementor Full Width</span> anlegen, veröffentlichen und mit Elementor bearbeiten. Dort auf „Templates" &rarr; im Elementor-Bibliothek-Panel den Reiter „Templates" &rarr; „Upload" und die JSON-Datei auswählen. Nach einer kurzen Warnung („Don't show this message again" &rarr; „Continue") wird die Vorlage erfolgreich importiert.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="entry" id="s5">
+      <div class="entry-head">
+        <span class="entry-num">05</span>
+        <div class="entry-titles">
+          <h2>Feinschliff</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/qAEYLONGDPs?t=570" target="_blank" rel="noopener">ab 9:30</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Worauf achten</span>
+          <p>Claude erzeugt gelegentlich einen reinen HTML-Block statt echter Elementor-Container &mdash; in dem Fall lohnt sich eine Rückfrage an Claude, das zu korrigieren. Bilder werden beim Import nicht automatisch mitgeliefert: Sie müssen einzeln aus Google Stitch gespeichert (Rechtsklick &rarr; Bild speichern) und in Elementor neu eingesetzt werden.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Header & Footer</span>
+          <p>Werden separat über den Elementor Theme Builder angelegt: neuen Header bzw. Footer erstellen, vorhandenen Inhalt entfernen und den passenden, aus Stitch exportierten Code einfügen.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Feintuning</span>
+          <p>Kleinere Abstände (Columns Gap, Margin) lassen sich wie gewohnt direkt in Elementor anpassen und dann auf die anderen Sektionen übertragen &mdash; der Rest der Seite braucht laut Video nur noch punktuelles Nacharbeiten.</p>
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <footer>
+    Tools aus dem Video: <a href="https://elementor.com" target="_blank" rel="noopener">elementor.com</a> &middot; <a href="https://stitch.withgoogle.com" target="_blank" rel="noopener">Google Stitch</a> &middot; <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a>
+    &middot; ursprünglicher Upload: 01.05.2026 &middot; <a href="https://youtu.be/qAEYLONGDPs" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>
