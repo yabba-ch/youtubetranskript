@@ -1,0 +1,339 @@
+<meta charset="utf-8">
+<title>15 Open-Source-Alternativen zu teuren Abos</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EDEEE8;
+  --paper-raised:#F7F7F3;
+  --ink:#1B1D1F;
+  --ink-soft:#4C4E47;
+  --ink-faint:#5E6058;
+  --line:#D4D5CA;
+  --line-strong:#B9BBAE;
+  --accent:#B5652F;
+  --accent-deep:#7C401D;
+  --accent-soft:#F0DFC9;
+  --accent-2:#2F6E64;
+  --accent-2-soft:#DCEAE4;
+  --code-bg:#1B1D1F;
+  --code-fg:#EDEEE8;
+  --code-accent:#E3A15C;
+  --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(27,29,31,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+    --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+    --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+    --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+    --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+    --shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+  --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+  --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+  --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+  --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(0,0,0,0.4);
+}
+
+*{box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.65;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+@media (max-width:480px){ .wrap{padding:2rem 1rem 4rem;} }
+
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--accent-deep);display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+h1{font-family:'IBM Plex Serif',Georgia,serif;font-weight:600;font-size:34px;line-height:1.18;text-wrap:balance;margin:0.5rem 0 0.6rem;letter-spacing:-0.01em;}
+h2{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:19px;margin:0;text-wrap:balance;}
+h3{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 0.9rem;}
+
+.source-card{display:flex;align-items:center;gap:0.9rem;margin:0 0 1.75rem;}
+.source-thumb{flex:none;width:128px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:0.5px solid var(--line);display:block;}
+@media (max-width:480px){ .source-thumb{width:96px;} }
+.source-line{font-size:14.5px;color:var(--ink-soft);margin:0;}
+.source-line a{color:var(--accent-deep);text-decoration:none;border-bottom:0.5px solid currentColor;}
+.source-line a:hover{color:var(--accent);}
+
+.lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin:0 0 2rem;}
+
+.kontextbox{
+  background:var(--paper-raised);border:0.5px solid var(--line);border-left:2px solid var(--accent-2);
+  border-radius:0 10px 10px 0;padding:0.9rem 1.1rem;font-size:15px;color:var(--ink-soft);margin-bottom:2.75rem;
+}
+.kontextbox strong{color:var(--ink);font-weight:500;}
+
+.toc{border-top:0.5px solid var(--line-strong);border-bottom:0.5px solid var(--line-strong);padding:1rem 0;margin-bottom:3rem;}
+.toc-label{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.6rem;}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;}
+@media (max-width:520px){ .toc-grid{grid-template-columns:1fr;} }
+.toc-grid a{display:flex;align-items:baseline;gap:8px;font-size:14.5px;color:var(--ink-soft);text-decoration:none;padding:4px 0;}
+.toc-grid a:hover{color:var(--accent-deep);}
+.toc-grid .n{font-family:'IBM Plex Mono',monospace;color:var(--accent-deep);font-size:12.5px;width:1.4em;flex:none;}
+
+.cluster{margin-bottom:2.75rem;}
+.cluster-head{display:flex;align-items:baseline;gap:10px;margin-bottom:1.1rem;padding-bottom:0.6rem;border-bottom:0.5px solid var(--line-strong);}
+.cluster-head h2{flex:1;}
+.cluster-range{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);}
+
+.trick{display:grid;grid-template-columns:36px 1fr;gap:0.85rem;padding:1rem 0;border-top:0.5px solid var(--line);scroll-margin-top:1rem;}
+.trick:first-child{border-top:none;}
+.trick-num{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--accent-deep);background:var(--accent-soft);
+  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;
+}
+@media (max-width:480px){
+  .trick{grid-template-columns:30px 1fr;gap:0.65rem;}
+  .trick-num{width:26px;height:26px;font-size:11.5px;border-radius:7px;}
+}
+.trick-title-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 0.35rem;}
+.trick-title{font-size:16px;font-weight:500;margin:0;color:var(--ink);}
+.trick-time{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);text-decoration:none;white-space:nowrap;flex:none;}
+.trick-time:hover{color:var(--accent-deep);}
+.trick p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-soft);max-width:64ch;}
+.trick p + p{margin-top:0.5rem;}
+
+.inline-code{
+  font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);
+  padding:1px 6px;border-radius:4px;font-size:13.5px;
+}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--line-strong);font-size:13.5px;color:var(--ink-faint);}
+footer a{color:var(--accent-deep);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Selbststudium-Zusammenfassung des YouTube-Videos „15 Open-Source-Tools, die deine teuren Abos ersetzen" von Julian Ivanov: 15 selbst hostbare Alternativen zu bekannten Abo-Tools plus Anleitung, sie per One-Click-Install auf einem eigenen Server einzurichten und über Claude Code per SSH zu verwalten.</h2>
+
+  <p class="eyebrow">Selbststudium &middot; Video-Transkript</p>
+  <h1>15 Open-Source-Alternativen zu teuren Software-Abos</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/St097M5vokY" target="_blank" rel="noopener">
+      <img class="source-thumb" src="data:image/jpeg;base64,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" alt="Video-Vorschaubild: 15 Open-Source-Tools, die deine teuren Abos ersetzen">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/St097M5vokY" target="_blank" rel="noopener">„15 Open-Source-Tools, die deine teuren Abos ersetzen"</a>
+      &middot; Julian Ivanov | KI-Automatisierung &middot; 32 Min &middot; automatisch transkribiert
+    </p>
+  </div>
+  <p class="lede">
+    Für fast jedes Software-Abo gibt es eine kostenlose, selbst hostbare Open-Source-Alternative &mdash; von Automatisierung und Cloud-Speicher über CRM, Rechnungen und digitale Unterschriften bis zu Passwortmanager und KI-Agent. Am Ende: wie sich alle 15 Tools per One-Click-Install auf einem eigenen Server einrichten lassen, mit Claude Code per SSH als Einrichtungshilfe.
+  </p>
+
+  <div class="kontextbox">
+    <strong>Warum das mehr als nur Geld spart:</strong> Laut Berechnung der Harvard Business School würden Unternehmen ohne Open Source rund das 3,5-fache für Software zahlen. In Deutschland setzen laut Bitkom/PwC inzwischen 73&nbsp;% der Unternehmen Open Source ein (vor zwei Jahren 69&nbsp;%). Neben den Kosten zählt vor allem die Datenhoheit: Bei selbst gehosteten Tools bleiben Kundendaten, Rechnungen und Dokumente auf der eigenen Infrastruktur statt beim Anbieter.
+  </div>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Inhalt</p>
+    <div class="toc-grid">
+      <a href="#t01"><span class="n">01</span>n8n</a>
+      <a href="#t02"><span class="n">02</span>Open WebUI</a>
+      <a href="#t03"><span class="n">03</span>Nextcloud</a>
+      <a href="#t04"><span class="n">04</span>Paperless-ngx</a>
+      <a href="#t05"><span class="n">05</span>Stirling PDF</a>
+      <a href="#t06"><span class="n">06</span>NocoDB</a>
+      <a href="#t07"><span class="n">07</span>Twenty (CRM)</a>
+      <a href="#t08"><span class="n">08</span>Cal.com</a>
+      <a href="#t09"><span class="n">09</span>Invoice Ninja</a>
+      <a href="#t10"><span class="n">10</span>DocuSeal</a>
+      <a href="#t11"><span class="n">11</span>Typebot & Chatwoot</a>
+      <a href="#t12"><span class="n">12</span>Postiz</a>
+      <a href="#t13"><span class="n">13</span>Supabase</a>
+      <a href="#t14"><span class="n">14</span>Vaultwarden</a>
+      <a href="#t15"><span class="n">15</span>Hermes Agent</a>
+      <a href="#t16"><span class="n">16</span>Eigener Server</a>
+      <a href="#t17"><span class="n">17</span>Claude Code per SSH</a>
+      <a href="#t18"><span class="n">18</span>SSH-Schlüssel anlegen</a>
+    </div>
+  </nav>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>KI-Interfaces & Automatisierung</h2><span class="cluster-range">01&ndash;02</span></div>
+
+    <div class="trick" id="t1">
+      <span class="trick-num">01</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">n8n</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=238" target="_blank" rel="noopener">ab 3:58</a></div>
+        <p>Automatisierungstool zum Zusammenklicken von Abläufen (z.&nbsp;B. Rechnung rein &rarr; Text auslesen &rarr; Datenbankeintrag &rarr; Benachrichtigung), mit über 500 nativen Integrationen und optionaler KI-Einbindung. <a href="https://github.com/n8n-io/n8n" target="_blank" rel="noopener">GitHub</a></p>
+        <p>In Unternehmen eher wichtiger geworden statt weniger, aus drei Gründen: Transparenz (der komplette Prozess liegt sichtbar auf einer Leinwand statt in einem Skript, das niemand mehr versteht), lückenlose Protokollierung jeder Ausführung samt Zwischendaten, und vollständiges Self-Hosting.</p>
+      </div>
+    </div>
+    <div class="trick" id="t2">
+      <span class="trick-num">02</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Open WebUI</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=349" target="_blank" rel="noopener">ab 5:49</a></div>
+        <p>ChatGPT-artige Oberfläche zum Selbsthosten mit freier Modellwahl (eigene API-Keys von OpenAI, Anthropic, Google, Mistral &hellip; oder ein lokales Modell), Benutzerverwaltung mit Rechten pro Mitarbeiter sowie durchsuchbaren eigenen Dokumenten samt Quellenangabe. <a href="https://github.com/open-webui/open-webui" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Eigene Assistenten lassen sich mit unterschiedlichen Modellen und Dokumenten anlegen. Wichtig: Self-Hosting sichert Oberfläche, Verläufe und Dokumente ab &mdash; Anfragen an einen externen Modell-Anbieter gehen weiterhin dorthin.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Dateien & Dokumente</h2><span class="cluster-range">03&ndash;05</span></div>
+
+    <div class="trick" id="t3">
+      <span class="trick-num">03</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Nextcloud</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=440" target="_blank" rel="noopener">ab 7:20</a></div>
+        <p>Ersetzt Dropbox/Google Drive: eigener Dateispeicher mit Ordnern, Freigabelinks, Versionsverlauf und Sync-Apps für Windows, Mac, Android und iPhone. <a href="https://github.com/nextcloud/server" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Sensible Unterlagen (Kundenverträge, Personaldaten, Ausweise) bleiben auf dem eigenen Server, Freigaben laufen über passwortgeschützte, automatisch ablaufende Links statt Mail-Anhänge. Bringt zusätzlich Kalender, Kontakte, Aufgaben und Online-Bearbeitung von Office-Dokumenten mit.</p>
+      </div>
+    </div>
+    <div class="trick" id="t4">
+      <span class="trick-num">04</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Paperless-ngx</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=527" target="_blank" rel="noopener">ab 8:47</a></div>
+        <p>Dokumentenmanagement mit automatischer OCR: Dokumente landen in einem Ordner, Paperless liest den Text aus den Bildern aus und macht sie volltextdurchsuchbar &mdash; auch wenn der Suchbegriff nur als Bildtext im gescannten Brief steht. <a href="https://github.com/paperless-ngx/paperless-ngx" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Eignet sich damit auch, um die komplette Buchhaltung vorzubereiten, bevor sie an den Steuerberater geht.</p>
+      </div>
+    </div>
+    <div class="trick" id="t5">
+      <span class="trick-num">05</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Stirling PDF</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=581" target="_blank" rel="noopener">ab 9:41</a></div>
+        <p>Ersetzt Adobe Acrobat Pro (rund 25&nbsp;&euro;/Monat) mit über 50 PDF-Funktionen statt der meist genutzten fünf: zusammenführen, aufteilen, drehen, verkleinern, Office-Dateien umwandeln, OCR auf gescannten Seiten, schwärzen, Wasserzeichen setzen, signieren. <a href="https://github.com/Stirling-Tools/Stirling-PDF" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Läuft komplett auf dem eigenen Server oder Gerät.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Daten, CRM & Business</h2><span class="cluster-range">06&ndash;10</span></div>
+
+    <div class="trick" id="t6">
+      <span class="trick-num">06</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">NocoDB</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=629" target="_blank" rel="noopener">ab 10:29</a></div>
+        <p>Ersetzt Airtable: Datenbank mit Tabellen-Oberfläche (Spaltentypen wie Datum, Auswahl, Datei, Verknüpfung zu anderen Tabellen) und mehreren Ansichten &mdash; Tabelle, Kanban, Kalender, Galerie. <a href="https://github.com/nocodb/nocodb" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Besonders nützlich in Kombination mit n8n: Automatisierungen lesen und schreiben direkt in denselben Tabellen, z.&nbsp;B. ausgelöst durch die Änderung eines Auswahlfelds.</p>
+      </div>
+    </div>
+    <div class="trick" id="t7">
+      <span class="trick-num">07</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Twenty (CRM)</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=710" target="_blank" rel="noopener">ab 11:50</a></div>
+        <p>Open-Source-CRM: Firmen und Personen anlegen und verknüpfen, Zeitleiste mit Notizen pro Kontakt, Angebote durch eine Pipeline ziehen, um offen liegendes Geld sichtbar zu machen, eigene Dashboards für Umsatz- und Deal-Zahlen. <a href="https://github.com/twentyhq/twenty" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Über n8n lassen sich z.&nbsp;B. neue Kontaktformular-Anfragen automatisch samt Notiz und Quelle als Kontakt anlegen, statt sie per Hand nachzupflegen.</p>
+      </div>
+    </div>
+    <div class="trick" id="t8">
+      <span class="trick-num">08</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Cal.com</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=792" target="_blank" rel="noopener">ab 13:12</a></div>
+        <p>Ersetzt Calendly & Co. (dort oft rund 15&nbsp;&euro;/Monat): öffentlich buchbare Termin-Events mit Kalenderabgleich, frei anpassbaren Vorab-Abfragen sowie automatischen Bestätigungs- und Erinnerungsmails inklusive Video-Link. <a href="https://github.com/calcom/cal.com" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Optional lässt sich vor der Buchung eine Zahlung (z.&nbsp;B. über Stripe) vorschalten.</p>
+      </div>
+    </div>
+    <div class="trick" id="t9">
+      <span class="trick-num">09</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Invoice Ninja</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=869" target="_blank" rel="noopener">ab 14:29</a></div>
+        <p>Deckt Rechnungen und Zeiterfassung komplett ab: Kunden anlegen, Angebote per Klick in Rechnungen umwandeln, wiederkehrende Rechnungen automatisieren und automatische Zahlungserinnerungen nach festgelegtem Zeitplan verschicken. <a href="https://github.com/invoiceninja/invoiceninja" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Eingebauter Timer pro Projekt übernimmt erfasste Stunden direkt in eine Rechnung &mdash; bei Abrechnung nach Stunden spart das ein zweites Tool.</p>
+      </div>
+    </div>
+    <div class="trick" id="t10">
+      <span class="trick-num">10</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">DocuSeal</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=919" target="_blank" rel="noopener">ab 15:19</a></div>
+        <p>Ersetzt DocuSign/PandaDoc (dort je nach Paket 25&ndash;45&nbsp;&euro;/Monat): Dokument hochladen, Unterschrift-, Datums- und Namensfelder platzieren, Link verschicken &mdash; der Empfänger unterschreibt im Browser, das fertige Dokument kommt inklusive Protokoll zurück (wer, wann, von wo). <a href="https://github.com/docusealco/docuseal" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Lässt sich mit n8n verknüpfen, um nach einer Unterschrift automatisch z.&nbsp;B. einen Onboarding-Prozess auszulösen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Kommunikation, Daten & Sicherheit</h2><span class="cluster-range">11&ndash;15</span></div>
+
+    <div class="trick" id="t11">
+      <span class="trick-num">11</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Typebot & Chatwoot</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=999" target="_blank" rel="noopener">ab 16:39</a></div>
+        <p>Typebot baut Chatbots per Drag-and-Drop für Website, WhatsApp & Co., inklusive KI-Anbindung und n8n-Trigger während des Gesprächs; Statistiken zeigen, an welcher Stelle Besucher aussteigen. <a href="https://github.com/baptisteArno/typebot.io" target="_blank" rel="noopener">Typebot auf GitHub</a></p>
+        <p>Für größeren Kundensupport bündelt <a href="https://github.com/chatwoot/chatwoot" target="_blank" rel="noopener">Chatwoot</a> &mdash; die selbst gehostete Alternative zu Zendesk/Intercom &mdash; Mail, WhatsApp und Instagram an einer zentralen Stelle.</p>
+      </div>
+    </div>
+    <div class="trick" id="t12">
+      <span class="trick-num">12</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Postiz</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=1090" target="_blank" rel="noopener">ab 18:10</a></div>
+        <p>Plant und veröffentlicht Social-Media-Beiträge kanalübergreifend (LinkedIn, Instagram, Facebook, X, TikTok &hellip;) über einen Kalender, mit pro Kanal angepassten Textvarianten. <a href="https://github.com/gitroomhq/postiz-app" target="_blank" rel="noopener">GitHub</a></p>
+        <p>KI-Agenten (Claude Code, Codex, Hermes &hellip;) lassen sich zum gemeinsamen Verfassen der Beiträge anknüpfen. Kommerzielle Alternativen kosten meist 15&ndash;25&nbsp;&euro;/Monat gestaffelt nach Kanalzahl, zusätzlich pro verwaltetem Kundenaccount.</p>
+      </div>
+    </div>
+    <div class="trick" id="t13">
+      <span class="trick-num">13</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Supabase</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=1174" target="_blank" rel="noopener">ab 19:34</a></div>
+        <p>Backend-Baustein für alles, was eine von einer KI gebaute App noch braucht: eine Postgres-Datenbank mit Authentication, Edge Functions, Echtzeitdaten, Datei-Speicher und Vektor-Embeddings für eigene RAG-Systeme. <a href="https://github.com/supabase/supabase" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Alles in einer Oberfläche inklusive Table-Editor und SQL-Editor &mdash; keine separate Vektordatenbank nötig.</p>
+      </div>
+    </div>
+    <div class="trick" id="t14">
+      <span class="trick-num">14</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Vaultwarden</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=1280" target="_blank" rel="noopener">ab 21:20</a></div>
+        <p>Selbst gehosteter, Bitwarden-kompatibler Passwortmanager-Server: Die offiziellen Bitwarden-Apps (Browser, Handy, Windows/Mac) verbinden sich einfach mit der eigenen Serveradresse, der Tresor bleibt aber bei dir statt beim Anbieter. <a href="https://github.com/dani-garcia/vaultwarden" target="_blank" rel="noopener">GitHub</a></p>
+        <p>Zugänge lassen sich gezielt an Mitarbeiter freigeben statt sie per Mail/WhatsApp zu verschicken; ein Bericht zeigt schwache und mehrfach verwendete Passwörter. Läuft mit rund 256&nbsp;MB Arbeitsspeicher.</p>
+      </div>
+    </div>
+    <div class="trick" id="t15">
+      <span class="trick-num">15</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Hermes Agent</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=1388" target="_blank" rel="noopener">ab 23:08</a></div>
+        <p>Autonomer KI-Agent für die eigene Hardware (z.&nbsp;B. Mac Mini oder Server), der 24/7 erreichbar ist, Aufgaben eigenständig erledigt und mit jeder Aufgabe dazulernt.</p>
+        <p>Erreichbar per Messenger (WhatsApp, Telegram) oder über eine eigene Desktop-App &mdash; laut Video aktuell der beste durchgehend erreichbare autonome KI-Agent.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="kontextbox">
+    <strong>Nicht jedes Tool ist Pflicht:</strong> Erst den konkreten Bedarf klären, dann das passende Tool einsetzen &mdash; nicht umgekehrt, nur weil es die Liste hergibt.
+  </div>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Alles auf einem eigenen Server einrichten</h2><span class="cluster-range">16&ndash;18</span></div>
+
+    <div class="trick" id="t16">
+      <span class="trick-num">16</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Eigener Server</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=1504" target="_blank" rel="noopener">ab 25:04</a></div>
+        <p>Alle 15 Tools brauchen als Basis einen eigenen Server, damit sie 24/7 von überall erreichbar sind. Im Video wird Hostinger genutzt (ab rund 8&nbsp;&euro;/Monat für deutlich mehr Rechenleistung, als man für einzelne Abo-Tools zahlen würde) &mdash; bei der Bestellung sind Docker und Traefik als Anwendungen auszuwählen.</p>
+        <p>Danach lassen sich fast alle vorgestellten Tools über den Docker-Manager-Katalog per One-Click-Install installieren &mdash; nur Open WebUI und Supabase müssen manuell eingerichtet werden.</p>
+      </div>
+    </div>
+    <div class="trick" id="t17">
+      <span class="trick-num">17</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Claude Code per SSH mit dem Server verbinden</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=1606" target="_blank" rel="noopener">ab 26:46</a></div>
+        <p>Statt sich allein durch Server-Dokumentation zu kämpfen, verbindet man Claude Code (oder Codex) per SSH direkt mit dem Server: in der Claude-Code-Desktop-App über den Arbeitsbereich den Bereich SSH wählen.</p>
+        <p>Claude kann dann installierte Programme auflisten, bei der Einrichtung einzelner Tools helfen, fehlende Parameter erklären &mdash; oder sogar zusätzliche Software installieren, die der Hoster nicht als One-Click-Vorlage anbietet.</p>
+      </div>
+    </div>
+    <div class="trick" id="t18">
+      <span class="trick-num">18</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">SSH-Schlüssel anlegen und verbinden</p><a class="trick-time" href="https://youtu.be/St097M5vokY?t=1723" target="_blank" rel="noopener">ab 28:43</a></div>
+        <p>Bei Hostinger unter Einstellungen &rarr; SSH-Schlüssel einen neuen Schlüssel erzeugen (Public Key dort eintragen, Private Key bleibt lokal &mdash; ein Coding-Agent kann diesen Schritt auch übernehmen).</p>
+        <p>In Claude Code unter dem Arbeitsbereich &rarr; SSH &rarr; SSH-Verbindung hinzufügen: Gerätename, SSH-Host (<span class="inline-code">Benutzername@IP-Adresse</span>) und Port eingeben, Verbindung testen und einmalig mit dem Root-Passwort anmelden. Als Arbeitsordner empfiehlt sich das Root-Verzeichnis, damit Claude Code Zugriff auf den gesamten Server hat.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Zusammengefasst aus dem Video-Transkript für das Selbststudium &middot; ursprünglicher Upload: 18.09.2026 &middot;
+    <a href="https://youtu.be/St097M5vokY" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>
