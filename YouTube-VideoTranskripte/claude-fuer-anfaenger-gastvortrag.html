@@ -1,0 +1,332 @@
+<meta charset="utf-8">
+<title>Claude für Anfänger &ndash; der komplette Gastvortrag</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EDEEE8;
+  --paper-raised:#F7F7F3;
+  --ink:#1B1D1F;
+  --ink-soft:#4C4E47;
+  --ink-faint:#5E6058;
+  --line:#D4D5CA;
+  --line-strong:#B9BBAE;
+  --accent:#B5652F;
+  --accent-deep:#7C401D;
+  --accent-soft:#F0DFC9;
+  --accent-2:#2F6E64;
+  --accent-2-soft:#DCEAE4;
+  --code-bg:#1B1D1F;
+  --code-fg:#EDEEE8;
+  --code-accent:#E3A15C;
+  --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(27,29,31,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+    --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+    --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+    --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+    --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+    --shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+  --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+  --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+  --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+  --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(0,0,0,0.4);
+}
+
+*{box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.65;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+@media (max-width:480px){ .wrap{padding:2rem 1rem 4rem;} }
+
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--accent-deep);display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+h1{font-family:'IBM Plex Serif',Georgia,serif;font-weight:600;font-size:34px;line-height:1.18;text-wrap:balance;margin:0.5rem 0 0.6rem;letter-spacing:-0.01em;}
+h2{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:19px;margin:0;text-wrap:balance;}
+h3{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 0.9rem;}
+
+.source-card{display:flex;align-items:center;gap:0.9rem;margin:0 0 1.75rem;}
+.source-thumb{flex:none;width:128px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:0.5px solid var(--line);display:block;}
+@media (max-width:480px){ .source-thumb{width:96px;} }
+.source-line{font-size:14.5px;color:var(--ink-soft);margin:0;}
+.source-line a{color:var(--accent-deep);text-decoration:none;border-bottom:0.5px solid currentColor;}
+.source-line a:hover{color:var(--accent);}
+
+.lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin:0 0 2rem;}
+
+.kontextbox{
+  background:var(--paper-raised);border:0.5px solid var(--line);border-left:2px solid var(--accent-2);
+  border-radius:0 10px 10px 0;padding:0.9rem 1.1rem;font-size:15px;color:var(--ink-soft);margin-bottom:2.75rem;
+}
+.kontextbox strong{color:var(--ink);font-weight:500;}
+
+.toc{border-top:0.5px solid var(--line-strong);border-bottom:0.5px solid var(--line-strong);padding:1rem 0;margin-bottom:3rem;}
+.toc-label{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.6rem;}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;}
+@media (max-width:520px){ .toc-grid{grid-template-columns:1fr;} }
+.toc-grid a{display:flex;align-items:baseline;gap:8px;font-size:14.5px;color:var(--ink-soft);text-decoration:none;padding:4px 0;}
+.toc-grid a:hover{color:var(--accent-deep);}
+.toc-grid .n{font-family:'IBM Plex Mono',monospace;color:var(--accent-deep);font-size:12.5px;width:1.4em;flex:none;}
+
+.cluster{margin-bottom:2.75rem;}
+.cluster-head{display:flex;align-items:baseline;gap:10px;margin-bottom:1.1rem;padding-bottom:0.6rem;border-bottom:0.5px solid var(--line-strong);}
+.cluster-head h2{flex:1;}
+.cluster-range{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);}
+
+.trick{display:grid;grid-template-columns:36px 1fr;gap:0.85rem;padding:1rem 0;border-top:0.5px solid var(--line);scroll-margin-top:1rem;}
+.trick:first-child{border-top:none;}
+.trick-num{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--accent-deep);background:var(--accent-soft);
+  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;
+}
+@media (max-width:480px){
+  .trick{grid-template-columns:30px 1fr;gap:0.65rem;}
+  .trick-num{width:26px;height:26px;font-size:11.5px;border-radius:7px;}
+}
+.trick-title-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 0.35rem;}
+.trick-title{font-size:16px;font-weight:500;margin:0;color:var(--ink);}
+.trick-time{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);text-decoration:none;white-space:nowrap;flex:none;}
+.trick-time:hover{color:var(--accent-deep);}
+.trick p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-soft);max-width:64ch;}
+.trick p + p{margin-top:0.5rem;}
+
+.inline-code{
+  font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);
+  padding:1px 6px;border-radius:4px;font-size:13.5px;
+}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--line-strong);font-size:13.5px;color:var(--ink-faint);}
+footer a{color:var(--accent-deep);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Selbststudium-Zusammenfassung des YouTube-Videos „Claude für Anfänger &ndash; der komplette Gastvortrag" von Calvin Hollywood (AI): ein einstündiger Gastvortrag in einer Finanz-Community, der Claude von Grund auf erklärt &ndash; von der Grundhaltung über Claude Code, Tarife und Modelle bis zu Konnektoren, Social-Media-Automatisierung und dem Unterschied zu ChatGPT.</h2>
+
+  <p class="eyebrow">Selbststudium &middot; Video-Transkript</p>
+  <h1>Claude für Anfänger &ndash; der komplette Gastvortrag</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/777hOG2ZjaI" target="_blank" rel="noopener">
+      <img class="source-thumb" src="data:image/jpeg;base64,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beZ+6DJm/KPFM35R4rHtvZs5n7ptvZt5n7oMmb8oTN+ULHtvZt5n7ptvZM5n7oMmb8oTN+ULHtvZs5n7ptvZN5n7oMmb8oTN+ULHtvZt5n7ptvZt5n7oMmb8oTN+ULHtvZt5n7ptvZt5n7oMmb8oTN+ULHtfZt5n7ptvZt5n7oL5vyhM35Qqbb2beZ+6bb2beZ+6DJm/KEzDshY9t7NvM/dNt7NvM/dBe47IU5vyhY9t7NvM/dNt7NvM/dUWJJNyon9dvwhRtuEbPH7qhJcSSbk7yoCIiDbOqiy0tvL2vAJt5e14BUbpWOQXaVrbeTteAQzyH+rwCDajN2qVpiV7RYOU7aTteCDcuoJWptpO14JtpO14INtRfRam2k7Xgm2k7Xgg2lFrnRa21f2vBWZUysddrhccQCoO1h2GuleHSCzd+vWvVUUAjbut7l4ZmNYhH6tRb/sb9lkHlHioFhVf/rZ9lxywyyd8c8MY9+54aN/zWnM/aDLmsF4t3lBijt9V/wDBv2WP0ziBNzUEn4G/ZZ+Kt/Ni9s1tgLGzVSScMvkA95K8Y7GsRcLGpP6W/ZYzidYf+t/8R9k+Kp80eufUMJ/ElLu5ugWrLidNF6rmX7ukV5aSrqJfXlce7qVNq/itzj9sXmv09DNjjjpG0n36DwWjLidU/c8N9w+65m1f2vBRtH8VuYSMXPK/bamqJZzeWRzwNwJ0HyVWrXzu4ptHcVphtSDoArGsRleRYu09yjO7igzWSyw7R3FNo7igzWUWWLaO4ptHcUGWyLFndxTO7igy2SyxZ3cUzu4oMtkssW0dxTO7igy2SyxZ3cUzu4oMtlNlhzu4pndxQZbJZYs7uKZ3cUGWyWWLO7imd3FBlsllizu4pndxQZbJZYs7uKZ3cUGWyWWLO7imd3FBlsllizu4pndxQZbJZYs7uKbR3FBlsllizu4pndxQZbIsWd3FM7uKDKpWHO7imd3FBVERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREH//2Q==">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/777hOG2ZjaI" target="_blank" rel="noopener">„Claude für Anfänger &ndash; der komplette Gastvortrag (1 Stunde)"</a>
+      &middot; Calvin Hollywood (AI) &middot; 67 Min &middot; automatisch transkribiert
+    </p>
+  </div>
+  <p class="lede">
+    Gastvortrag in einer Finanz-Community, ausdrücklich für Claude-Einsteiger: wie man Claude wie einen Mitarbeiter führt, warum sich der Einstieg direkt über Claude Code lohnt, welche Tarife, Modelle und kostenlosen Werkzeuge sich anbieten &ndash; und wie sich damit Videoschnitt, eigene Mini-Tools und komplette Social-Media-Automatisierung ohne eine Zeile Code umsetzen lassen.
+  </p>
+
+  <div class="kontextbox">
+    <strong>Ausgangspunkt:</strong> Der Referent hat in 4&ndash;5 Monaten mit Claude 124 Websites, 21 Apps/Tools und 4 Chrome-Erweiterungen gebaut &ndash; ohne Programmierkenntnisse, nur durch Reinsprechen ins Chatfenster. Alle Beispiele im Video entstehen auf dieselbe Art: beschreiben, was man haben will, nichts klicken oder programmieren.
+  </div>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Inhalt</p>
+    <div class="toc-grid">
+      <a href="#t1"><span class="n">01</span>Claude als Mitarbeiter führen</a>
+      <a href="#t2"><span class="n">02</span>Direkt mit Claude Code starten</a>
+      <a href="#t3"><span class="n">03</span>Desktop-App, Ordner, Konnektoren</a>
+      <a href="#t4"><span class="n">04</span>Tarife im Vergleich</a>
+      <a href="#t5"><span class="n">05</span>Kostenlose Werkzeuge besorgen lassen</a>
+      <a href="#t6"><span class="n">06</span>Whisper Flow zum Diktieren</a>
+      <a href="#t7"><span class="n">07</span>Rohvideo automatisch schneiden</a>
+      <a href="#t8"><span class="n">08</span>Eigene Mini-Tools bauen lassen</a>
+      <a href="#t9"><span class="n">09</span>Die vier Modelle</a>
+      <a href="#t10"><span class="n">10</span>Eigener Sprachassistent per API</a>
+      <a href="#t11"><span class="n">11</span>Konnektoren verbinden</a>
+      <a href="#t12"><span class="n">12</span>Website &rarr; Social-Media-Post</a>
+      <a href="#t13"><span class="n">13</span>Composio als Adapter</a>
+      <a href="#t14"><span class="n">14</span>Longform &rarr; Shorts automatisch</a>
+      <a href="#t15"><span class="n">15</span>Alle Kommentare an einem Ort</a>
+      <a href="#t16"><span class="n">16</span>Zusammenarbeit &amp; Korrekturen</a>
+      <a href="#t17"><span class="n">17</span>Claude denkt eigenständig mit</a>
+      <a href="#t18"><span class="n">18</span>Claude vs. ChatGPT</a>
+      <a href="#t19"><span class="n">19</span>Tools &amp; Websites verkaufen</a>
+    </div>
+  </nav>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Grundhaltung</h2><span class="cluster-range">01&ndash;02</span></div>
+
+    <div class="trick" id="t1">
+      <span class="trick-num">01</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Claude wie einen Mitarbeiter führen</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=249" target="_blank" rel="noopener">ab 4:09</a></div>
+        <p>Claude einen Namen geben (z.&nbsp;B. Claudius/Claudia) und wie einen echten neuen Mitarbeiter behandeln: am Anfang alles erklären, korrigieren, nachfragen lassen. Je besser man Menschen führen kann, desto besser gelingt auch die Führung der KI &ndash; sie wird mit jeder Korrektur besser.</p>
+        <p>Typische Sätze dafür: „Verstehe ich nicht, erklär's noch mal", „Warum so und nicht anders?", „Gut, merk dir das fürs nächste Mal."</p>
+      </div>
+    </div>
+    <div class="trick" id="t2">
+      <span class="trick-num">02</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Direkt mit Claude Code starten</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=359" target="_blank" rel="noopener">ab 5:59</a></div>
+        <p>Claude Code klingt nach Programmieren, ist es aber nicht: Man tippt oder spricht einfach in ein Chatfenster, ganz ohne Terminal oder Slash-Befehle. Der Vorteil gegenüber Claude Chat: Claude Code kann fast alles, was Chat und Cowork auch können, plus Zugriff auf den eigenen Rechner.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Einrichtung &amp; Tarife</h2><span class="cluster-range">03&ndash;06</span></div>
+
+    <div class="trick" id="t3">
+      <span class="trick-num">03</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Desktop-App, Ordner, Konnektoren</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=428" target="_blank" rel="noopener">ab 7:08</a></div>
+        <p>Claude-Desktop-App installieren und unten links einen Arbeitsordner auf dem Desktop festlegen &ndash; anders als Claude Chat kann Claude Code direkt auf den Rechner zugreifen und legt Dateien, Bilder und Videos dort ab. Optional lassen sich danach Konnektoren wie E-Mail, Notion oder Social-Media-Konten anbinden, damit Claude diese Dienste selbst bedienen kann.</p>
+      </div>
+    </div>
+    <div class="trick" id="t4">
+      <span class="trick-num">04</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Tarife im Vergleich</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=449" target="_blank" rel="noopener">ab 7:29</a></div>
+        <p>Drei Stufen: rund 18&ndash;20&nbsp;&euro;/Monat zum Reinschnuppern, 90&nbsp;&euro;/Monat (Max, die eigene Empfehlung &ndash; das Limit wird trotz intensiver Nutzung kaum erreicht) und 200&nbsp;&euro;/Monat. Jede Stufe hat ein rollierendes 5-Stunden-Nutzungsfenster plus ein Wochenlimit.</p>
+        <p>Vergleich zur Einordnung: Eine Teilzeitkraft kostet 500&ndash;600&nbsp;&euro;/Monat für 40&nbsp;Stunden &ndash; der 90&#8209;&euro;-Tarif liefert dagegen die Power mehrerer Mitarbeiter (Social-Media-Team, Video-Schnitt, Programmierung).</p>
+      </div>
+    </div>
+    <div class="trick" id="t5">
+      <span class="trick-num">05</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Kostenlose Werkzeuge besorgen lassen</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=716" target="_blank" rel="noopener">ab 11:56</a></div>
+        <p>Vier Gratis-Tools, die Claude sich auf Zuruf selbst herunterlädt und einrichtet: <span class="inline-code">ffmpeg</span> (Videoschnitt), <span class="inline-code">yt-dlp</span> (YouTube-Videos zum Studieren oder Weiterverarbeiten herunterladen), Whisper (Ton in Text umwandeln) und Hyperframes (Einblendungen &amp; Animationen für Videoschnitt).</p>
+        <p>Sagt Claude einmal „kann ich nicht", reicht meist ein „streng dich an, das geht doch" &ndash; danach findet es die Lösung selbst.</p>
+      </div>
+    </div>
+    <div class="trick" id="t6">
+      <span class="trick-num">06</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Whisper Flow zum freihändigen Diktieren</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=837" target="_blank" rel="noopener">ab 13:57</a></div>
+        <p>Einziges Tool, das man selbst installieren muss (nicht von Claude besorgen lassen): läuft im Hintergrund, per Tastenkombination gedrückt halten, sprechen, loslassen &ndash; die Stimme wird sofort transkribiert, inklusive Korrektur und Absätzen. Funktioniert systemweit, nicht nur im Claude-Fenster.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Content &amp; eigene Tools bauen lassen</h2><span class="cluster-range">07&ndash;10</span></div>
+
+    <div class="trick" id="t7">
+      <span class="trick-num">07</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Rohvideo automatisch schneiden lassen</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=1006" target="_blank" rel="noopener">ab 16:46</a></div>
+        <p>Rohvideo in den Arbeitsordner legen und Claude bitten, es zu schneiden &ndash; inklusive Einblendungen, Untertitel, Color-Grading, Tonanpassung und Herausschneiden von Versprechern. Claude trifft dabei eigenständig auch die Entscheidung, wann welche Einblendung erscheint; Design und Schriftart lassen sich per Zuruf anpassen (z.&nbsp;B. „mach's in Schreibschrift").</p>
+      </div>
+    </div>
+    <div class="trick" id="t8">
+      <span class="trick-num">08</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Eigene Mini-Tools bauen lassen</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=1206" target="_blank" rel="noopener">ab 20:06</a></div>
+        <p>Statt Apps im Store zu suchen, beschreibt man den Alltagsbedarf und lässt Claude das Tool direkt programmieren. Beispiele aus dem Video: ein Screenshot-Tool mit Pfeil-Markierung und Zensur-Funktion, ein Präsentationstool, ein Musikplayer für den eigenen Ordner, eine Checkliste im Menü und digitale Sticky Notes für den Desktop &ndash; jeweils in wenigen Minuten erstellt.</p>
+      </div>
+    </div>
+    <div class="trick" id="t9">
+      <span class="trick-num">09</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Die vier Modelle: Haiku, Sonnet, Opus, Fable</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=1304" target="_blank" rel="noopener">ab 21:44</a></div>
+        <p>Haiku eignet sich für einfache Anfragen (schnell, günstig), Sonnet für mittelschwere Aufgaben, Opus &ndash; das meistgenutzte Modell im Vortrag &ndash; für die eigentliche Umsetzung. Fable ist das stärkste Modell und eignet sich besonders zur Qualitätskontrolle im Anschluss: nach Opus wechseln und prüfen lassen, was noch fehlerhaft oder z.&nbsp;B. datenschutzrechtlich problematisch ist.</p>
+        <p>Das genutzte Guthaben und die Rücksetzzeit des Limits lassen sich über ein kleines Kreissymbol unten in der Oberfläche einsehen.</p>
+      </div>
+    </div>
+    <div class="trick" id="t10">
+      <span class="trick-num">10</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Eigener Sprachassistent per API</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=1557" target="_blank" rel="noopener">ab 25:57</a></div>
+        <p>Für Fortgeschrittene: ein eigener, per Claude-API angebundener Sprachassistent („Chavis") zum Brainstormen während der Arbeit &ndash; läuft unabhängig vom Chatfenster und lässt sich ebenfalls von Claude selbst bauen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Konnektoren &amp; Social-Media-Automatisierung</h2><span class="cluster-range">11&ndash;15</span></div>
+
+    <div class="trick" id="t11">
+      <span class="trick-num">11</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Konnektoren verbinden</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=1672" target="_blank" rel="noopener">ab 27:52</a></div>
+        <p>Unter „Anpassen &rarr; Konnektoren" lassen sich Gratis-Programme wie Gmail, Notion, Evernote, Netlify (Website-Hosting), Canva und Bild-/Video-Tools mit Claude verknüpfen. Danach bedient Claude diese Werkzeuge direkt &ndash; z.&nbsp;B. Canva, ohne dass man die Oberfläche selbst noch anfasst.</p>
+      </div>
+    </div>
+    <div class="trick" id="t12">
+      <span class="trick-num">12</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Website automatisch zum Social-Media-Post</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=1797" target="_blank" rel="noopener">ab 29:57</a></div>
+        <p>Beispiel: Event-Website an Claude geben und einen deutschsprachigen Instagram-Karussell-Post im passenden Format verlangen, der sich am Design und den Inhalten der Website orientiert. Claude erstellt die Grafiken dafür über angebundene Bildwerkzeuge (im Video u.&nbsp;a. Hedra und ChatGPT Image) automatisch mit Speakern, Preisen und Tickets.</p>
+      </div>
+    </div>
+    <div class="trick" id="t13">
+      <span class="trick-num">13</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Composio als Adapter für nicht native Tools</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=1941" target="_blank" rel="noopener">ab 32:21</a></div>
+        <p>Für Dienste, die Claude nicht direkt unterstützt (z.&nbsp;B. YouTube- oder Instagram-Kanäle), vermittelt Composio als Adapter: mit einem kostenlosen Account den eigenen Kanal bei Composio hinterlegen, danach kann Claude über diese Verknüpfung darauf zugreifen. Für reine Social-Media-Verwaltung eignen sich alternativ auch Tools wie Metricool, Buffer oder Hootsuite.</p>
+      </div>
+    </div>
+    <div class="trick" id="t14">
+      <span class="trick-num">14</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Lange YouTube-Videos automatisch zu Shorts</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=2052" target="_blank" rel="noopener">ab 34:12</a></div>
+        <p>Claude anweisen, die letzten eigenen YouTube-Videos zu sichten (per <span class="inline-code">yt-dlp</span> heruntergeladen), im Transkript eigenständige, für sich stehende Stellen zu finden und daraus fertige Shorts mit Untertiteln im eigenen Stil zu schneiden &ndash; anschließend direkt automatisiert auf dem Kanal einplanen lassen.</p>
+      </div>
+    </div>
+    <div class="trick" id="t15">
+      <span class="trick-num">15</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Alle Social-Media-Kommentare an einem Ort</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=2598" target="_blank" rel="noopener">ab 43:18</a></div>
+        <p>Auf Zuruf ein eigenes Tool bauen lassen, das Kommentare von YouTube, LinkedIn, Facebook und Instagram in einem gemeinsamen Posteingang sammelt, Antworten vorschlägt und zusätzlich auswertet, welche Themen und Wünsche in der Community am häufigsten genannt werden &ndash; als Grundlage für künftige Inhalte. Ohne Design-Vorgaben in einer Nacht fertiggestellt.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Zusammenarbeit, Grenzen &amp; Chancen</h2><span class="cluster-range">16&ndash;19</span></div>
+
+    <div class="trick" id="t16">
+      <span class="trick-num">16</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Fehler korrigieren wie bei einem Mitarbeiter</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=2283" target="_blank" rel="noopener">ab 38:03</a></div>
+        <p>Ergebnis gefällt nicht? Konkret nachbessern lassen (z.&nbsp;B. „Untertitel im Goldlook mit Rand") und danach „merk dir das fürs nächste Mal" sagen &ndash; im Gegensatz zu einem Menschen vergisst Claude diese Vorgabe nicht mehr. Diese abgespeicherten Vorlieben und Abläufe werden auch als Skills bezeichnet.</p>
+        <p>Für Social-Media-Content empfiehlt sich, dass Claude nur die Produktion übernimmt (Text, Bild, Schnitt, Posting) &ndash; die inhaltliche Grundlage (eigene Gedanken, Meinung) sollte weiterhin von einem selbst kommen, z.&nbsp;B. per Sprachnotiz auf drei von Claude gestellte Fragen.</p>
+      </div>
+    </div>
+    <div class="trick" id="t17">
+      <span class="trick-num">17</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Claude denkt eigenständig mit</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=2908" target="_blank" rel="noopener">ab 48:28</a></div>
+        <p>Beispiel E-Commerce: Beim Bau einer neuen Produktwebsite wies Claude von sich aus auf ein Lebensmittelgesetz hin (Werbeverbot für bestimmte Koffein-Aussagen) und passte den Text entsprechend an. Bei einer späteren Rechtsänderung (Google Fonts/EU-Recht) korrigierte Claude auf Zuruf rückwirkend alle 124 Websites des Referenten.</p>
+        <p>Umgekehrt verweigert Claude eigenständig heikle Aktionen &ndash; im Video etwa der Hinweis, einen versehentlich eingefügten API-Key sofort wieder zu löschen, statt ihn zu verwenden.</p>
+      </div>
+    </div>
+    <div class="trick" id="t18">
+      <span class="trick-num">18</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Claude vs. ChatGPT</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=2740" target="_blank" rel="noopener">ab 45:40</a></div>
+        <p>Keine grundsätzliche „besser/schlechter"-Aussage, sondern ein Unterschied im Charakter: ChatGPT bestätigt und schmeichelt tendenziell, Claude widerspricht auch ungefragt und weist unaufgefordert auf Fehler oder Risiken hin &ndash; im Video als der eigentliche Mehrwert im Vergleich beschrieben.</p>
+        <p>Beim Wechsel zwischen den Tools lässt sich das bisher erarbeitete Wissen mitnehmen: In Claude gibt es dafür den Menübefehl „Wissen importieren", der eine Anleitung liefert, um den bisherigen ChatGPT-Verlauf einzuspielen.</p>
+      </div>
+    </div>
+    <div class="trick" id="t19">
+      <span class="trick-num">19</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Eigene Tools &amp; Websites verkaufen</p><a class="trick-time" href="https://youtu.be/777hOG2ZjaI?t=3608" target="_blank" rel="noopener">ab 1:00:08</a></div>
+        <p>Ein für sich selbst gebautes Tool, das den eigenen Alltag spürbar erleichtert, lässt sich meist auch anderen anbieten oder verkaufen &ndash; ebenso Dienstleistungen wie schnelle Landingpages für Kunden mit kleinem Budget, für die sich klassische Agenturpreise nicht lohnen.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Zusammengefasst aus dem Video-Transkript für das Selbststudium &middot; ursprünglicher Upload: 15.09.2026 &middot;
+    <a href="https://youtu.be/777hOG2ZjaI" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>

@@ -1,0 +1,4 @@
+# Sensitive: never commit — live session cookies (YouTube/Google login)
+.claude/secrets/
+*.cookies.txt
+cookies.txt
