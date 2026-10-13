@@ -1,0 +1,275 @@
+<meta charset="utf-8">
+<title>Obsidian + Claude: Mobiler Workflow</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EDEEE8;
+  --paper-raised:#F7F7F3;
+  --ink:#1B1D1F;
+  --ink-soft:#4C4E47;
+  --ink-faint:#5E6058;
+  --line:#D4D5CA;
+  --line-strong:#B9BBAE;
+  --accent:#B5652F;
+  --accent-deep:#7C401D;
+  --accent-soft:#F0DFC9;
+  --accent-2:#2F6E64;
+  --accent-2-soft:#DCEAE4;
+  --code-bg:#1B1D1F;
+  --code-fg:#EDEEE8;
+  --code-accent:#E3A15C;
+  --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(27,29,31,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+    --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+    --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+    --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+    --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+    --shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+  --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+  --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+  --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+  --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(0,0,0,0.4);
+}
+
+*{box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.65;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+@media (max-width:480px){ .wrap{padding:2rem 1rem 4rem;} }
+
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--accent-deep);display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+h1{font-family:'IBM Plex Serif',Georgia,serif;font-weight:600;font-size:34px;line-height:1.18;text-wrap:balance;margin:0.5rem 0 0.6rem;letter-spacing:-0.01em;}
+h2{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:19px;margin:0;text-wrap:balance;}
+h3{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 0.9rem;}
+
+.source-card{display:flex;align-items:center;gap:0.9rem;margin:0 0 1.75rem;}
+.source-thumb{flex:none;width:128px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:0.5px solid var(--line);display:block;}
+@media (max-width:480px){ .source-thumb{width:96px;} }
+.source-line{font-size:14.5px;color:var(--ink-soft);margin:0;}
+.source-line a{color:var(--accent-deep);text-decoration:none;border-bottom:0.5px solid currentColor;}
+.source-line a:hover{color:var(--accent);}
+
+.lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin:0 0 2rem;}
+
+.kontextbox{
+  background:var(--paper-raised);border:0.5px solid var(--line);border-left:2px solid var(--accent-2);
+  border-radius:0 10px 10px 0;padding:0.9rem 1.1rem;font-size:15px;color:var(--ink-soft);margin-bottom:2.75rem;
+}
+.kontextbox strong{color:var(--ink);font-weight:500;}
+
+.toc{border-top:0.5px solid var(--line-strong);border-bottom:0.5px solid var(--line-strong);padding:1rem 0;margin-bottom:3rem;}
+.toc-label{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.6rem;}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;}
+@media (max-width:520px){ .toc-grid{grid-template-columns:1fr;} }
+.toc-grid a{display:flex;align-items:baseline;gap:8px;font-size:14.5px;color:var(--ink-soft);text-decoration:none;padding:4px 0;}
+.toc-grid a:hover{color:var(--accent-deep);}
+.toc-grid .n{font-family:'IBM Plex Mono',monospace;color:var(--accent-deep);font-size:12.5px;width:1.4em;flex:none;}
+
+.cluster{margin-bottom:2.75rem;}
+.cluster-head{display:flex;align-items:baseline;gap:10px;margin-bottom:1.1rem;padding-bottom:0.6rem;border-bottom:0.5px solid var(--line-strong);}
+.cluster-head h2{flex:1;}
+.cluster-range{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);}
+
+.trick{display:grid;grid-template-columns:36px 1fr;gap:0.85rem;padding:1rem 0;border-top:0.5px solid var(--line);scroll-margin-top:1rem;}
+.trick:first-child{border-top:none;}
+.trick-num{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--accent-deep);background:var(--accent-soft);
+  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;
+}
+@media (max-width:480px){
+  .trick{grid-template-columns:30px 1fr;gap:0.65rem;}
+  .trick-num{width:26px;height:26px;font-size:11.5px;border-radius:7px;}
+}
+.trick-title-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 0.35rem;}
+.trick-title{font-size:16px;font-weight:500;margin:0;color:var(--ink);}
+.trick-time{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);text-decoration:none;white-space:nowrap;flex:none;}
+.trick-time:hover{color:var(--accent-deep);}
+.trick p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-soft);max-width:64ch;}
+.trick p + p{margin-top:0.5rem;}
+
+.inline-code{
+  font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);
+  padding:1px 6px;border-radius:4px;font-size:13.5px;
+}
+
+.trick-shot{
+  display:block;width:100%;max-width:480px;border-radius:8px;border:0.5px solid var(--line);
+  box-shadow:var(--shadow);margin-top:0.7rem;
+}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--line-strong);font-size:13.5px;color:var(--ink-faint);}
+footer a{color:var(--accent-deep);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Selbststudium-Zusammenfassung des YouTube-Videos „Obsidian + Claude: Perfekter mobiler Workflow (kostenlos)" von The Node AI: wie man den Obsidian-Vault über Google Drive synchronisiert und mit der Claude-App auf dem Handy Notizen direkt im Vault ablegt.</h2>
+
+  <p class="eyebrow">Selbststudium &middot; Video-Transkript</p>
+  <h1>Obsidian + Claude: Mobiler Workflow</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/lbh37L2vVcs" target="_blank" rel="noopener">
+      <img class="source-thumb" src="data:image/jpeg;base64,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" alt="Vorschaubild des Videos">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/lbh37L2vVcs" target="_blank" rel="noopener">„Obsidian + Claude: Perfekter mobiler Workflow (kostenlos)"</a>
+      &middot; The Node AI | AI Automation &middot; 9 Min &middot; automatisch transkribiert
+    </p>
+  </div>
+  <p class="lede">
+    Obsidian ist lokal &ndash; das ist eine Stärke, aber unterwegs fehlt der Zugriff. Das Video zeigt eine kostenlose Alternative zu Obsidian Sync: Der Vault liegt in Google Drive, die Claude-App auf dem Handy schreibt Markdown-Dateien direkt dorthin, und Obsidian zeigt sie Sekunden später an.
+  </p>
+
+  <div class="kontextbox">
+    <strong>Der Kerngedanke:</strong> Ein Vault ist nur ein Ordner. Liegt er in Google Drive, übernimmt der Desktop-Client die Synchronisation. Eine Claude-Projektanweisung mit dem Drive-Link sorgt dafür, dass jede Notiz am richtigen Ort landet.
+  </div>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Inhalt</p>
+    <div class="toc-grid">
+      <a href="#t1"><span class="n">01</span>Obsidian ist lokal – unterwegs fehlt der Zugriff</a>
+      <a href="#t2"><span class="n">02</span>Der Vault ist nur ein Ordner</a>
+      <a href="#t3"><span class="n">03</span>Google-Drive-Desktop-Client installieren</a>
+      <a href="#t4"><span class="n">04</span>Ordner anlegen und als Vault öffnen</a>
+      <a href="#t5"><span class="n">05</span>Claude-Connector für Google Drive</a>
+      <a href="#t6"><span class="n">06</span>Vault-Ordner mit Drive synchronisieren</a>
+      <a href="#t7"><span class="n">07</span>BRAT und Claudian</a>
+      <a href="#t8"><span class="n">08</span>Obsidian Skills von Kepano</a>
+      <a href="#t9"><span class="n">09</span>Claude-Projekt mit Projektanweisung</a>
+      <a href="#t10"><span class="n">10</span>Test per Sprachaufnahme</a>
+      <a href="#t11"><span class="n">11</span>Der Kreislauf im Alltag</a>
+      <a href="#t12"><span class="n">12</span>Die drei Zutaten</a>
+    </div>
+  </nav>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Ausgangslage &amp; Idee</h2><span class="cluster-range">01&ndash;02</span></div>
+
+    <div class="trick" id="t1">
+      <span class="trick-num">01</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Obsidian ist lokal – unterwegs fehlt der Zugriff</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=2" target="_blank" rel="noopener">ab 0:02</a></div>
+        <p>Der Vault liegt nur auf dem Rechner. Wer unterwegs eine Idee hat, schreibt sie in irgendeine Notizapp und vergisst sie. Besser: direkt in den Vault. Obsidian Sync löst das, kostet aber ca. 4–5 € pro Monat und ist nicht nötig.</p>
+      </div>
+    </div>
+    <div class="trick" id="t2">
+      <span class="trick-num">02</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Der Vault ist nur ein Ordner</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=54" target="_blank" rel="noopener">ab 0:54</a></div>
+        <p>Liegt der Ordner in Google Drive, synchronisiert er sich auf alle Geräte: Die Claude-App auf dem Handy legt eine Datei in Drive ab, der Desktop-Client zieht sie auf den Rechner, Obsidian zeigt sie sofort an. Kein Copy-Paste, kein manuelles Übertragen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Setup am Rechner</h2><span class="cluster-range">03&ndash;06</span></div>
+
+    <div class="trick" id="t3">
+      <span class="trick-num">03</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Google-Drive-Desktop-Client installieren</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=81" target="_blank" rel="noopener">ab 1:21</a></div>
+        <p>Herunterladen, installieren, mit dem Google-Account einloggen. Der Client läuft im Hintergrund und legt einen Drive-Ordner im Explorer bzw. Finder an. Alles, was dort liegt, landet auch in der Cloud und umgekehrt.</p>
+      </div>
+    </div>
+    <div class="trick" id="t4">
+      <span class="trick-num">04</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Ordner anlegen und als Vault öffnen</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=116" target="_blank" rel="noopener">ab 1:56</a></div>
+        <p>Einen neuen Ordner als künftigen Vault erstellen. In Obsidian unten links das Vault-Menü öffnen und den Ordner als Vault wählen.</p>
+      </div>
+    </div>
+    <div class="trick" id="t5">
+      <span class="trick-num">05</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Claude-Connector für Google Drive</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=141" target="_blank" rel="noopener">ab 2:21</a></div>
+        <p>In Claude: Name links unten → Einstellungen → Konnektoren → <span class="inline-code">Google Drive</span> aktivieren. Unter «Fähigkeiten» ganz unten muss <b>Code-Ausführung und Dateierstellung</b> angehakt sein.</p>
+      </div>
+    </div>
+    <div class="trick" id="t6">
+      <span class="trick-num">06</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Vault-Ordner mit Drive synchronisieren</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=169" target="_blank" rel="noopener">ab 2:49</a></div>
+        <p>In Google Drive auf der Startseite «Weitere Ordner synchronisieren» wählen, den Vault-Ordner öffnen und «Mit Google Drive synchronisieren» anhaken. Das kleine Drive-Symbol am Ordner bestätigt, dass die Synchronisation läuft.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Obsidian-Plugins</h2><span class="cluster-range">07&ndash;08</span></div>
+
+    <div class="trick" id="t7">
+      <span class="trick-num">07</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">BRAT und Claudian</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=212" target="_blank" rel="noopener">ab 3:32</a></div>
+        <p>Über Einstellungen → Community-Erweiterungen das Plugin <span class="inline-code">BRAT</span> installieren und aktivieren. Dort «Plugin beta» wählen und das GitHub-Repo <span class="inline-code">Claudian</span> eintragen (Version «latest»). Danach erscheint Claudian in der Seitenleiste – Claude Code läuft in Obsidian.</p>
+      </div>
+    </div>
+    <div class="trick" id="t8">
+      <span class="trick-num">08</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Obsidian Skills von Kepano</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=301" target="_blank" rel="noopener">ab 5:01</a></div>
+        <p>Auf GitHub das Repo «Obsidian Skills» von Kepano öffnen, den Link kopieren und Claude in Obsidian sagen «installiere» plus Link. So kennt Claude die Arbeitsweise von Obsidian.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Mobile Version &amp; Tests</h2><span class="cluster-range">09&ndash;10</span></div>
+
+    <div class="trick" id="t9">
+      <span class="trick-num">09</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Claude-Projekt mit Projektanweisung</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=331" target="_blank" rel="noopener">ab 5:31</a></div>
+        <p>In der Claude-App ein Projekt anlegen, z. B. «Obsidian Mobile Workflow». In der Google-Drive-App beim Vault-Ordner über die drei Punkte «Link kopieren» wählen. Im Projekt eine Projektanweisung hinterlegen: Alles unter genau diesem Link speichern.</p>
+      </div>
+    </div>
+    <div class="trick" id="t10">
+      <span class="trick-num">10</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Test per Sprachaufnahme</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=391" target="_blank" rel="noopener">ab 6:31</a></div>
+        <p>Per Sprache: Testdatei «ABC» als Markdown unter dem Link speichern. Nach Bestätigung des Drive-Connectors ist die Datei auf dem Handy fertig, erscheint im Ordner auf dem Rechner und im Obsidian-Graph. Ein zweiter Test («Demo Obsidian Workflow») bestätigt den Ablauf.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Alltag &amp; Fazit</h2><span class="cluster-range">11&ndash;12</span></div>
+
+    <div class="trick" id="t11">
+      <span class="trick-num">11</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Der Kreislauf im Alltag</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=451" target="_blank" rel="noopener">ab 7:31</a></div>
+        <p>Unterwegs Gedanken tippen oder sprechen, Claude formuliert die Notiz sauber und legt sie als <span class="inline-code">.md</span> in Drive ab. Wenige Sekunden später synchronisiert der Desktop-Client und Obsidian zeigt die Datei. Du denkst unterwegs, Claude strukturiert, Obsidian speichert dauerhaft.</p>
+        <p><b>Wichtig:</b> Immer das Projekt nutzen. Nur durch die Projektanweisung weiss Claude, wohin die Datei gehört – sonst landet sie vermutlich überall, nur nicht im Vault.</p>
+      </div>
+    </div>
+    <div class="trick" id="t12">
+      <span class="trick-num">12</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Die drei Zutaten</p><a class="trick-time" href="https://youtu.be/lbh37L2vVcs?t=514" target="_blank" rel="noopener">ab 8:34</a></div>
+        <p>Google-Drive-Desktop-Client, Obsidian mit dem richtigen Vault-Ordner, Claude mit Google-Drive-Zugriff und Projektanweisung. Kostenlos, unter 10 Minuten, kein Obsidian-Sync-Abo nötig.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Zusammengefasst aus dem Video-Transkript für das Selbststudium &middot; Original auf Deutsch &middot;
+    <a href="https://youtu.be/lbh37L2vVcs" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>
