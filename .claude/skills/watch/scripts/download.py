@@ -45,11 +45,17 @@ def _pick_subtitle(out_dir: Path) -> Path | None:
     candidates = sorted(out_dir.glob("video*.vtt"))
     if not candidates:
         return None
-    preferred = [
+    de_pref = [
+        c for c in candidates
+        if any(marker in c.name for marker in (".de.", ".de-DE.", ".de-orig."))
+    ]
+    if de_pref:
+        return de_pref[0]
+    en_pref = [
         c for c in candidates
         if any(marker in c.name for marker in (".en.", ".en-US.", ".en-GB.", ".en-orig."))
     ]
-    return preferred[0] if preferred else candidates[0]
+    return en_pref[0] if en_pref else candidates[0]
 
 
 def _pick_video(out_dir: Path) -> Path | None:
@@ -75,7 +81,7 @@ def fetch_captions(url: str, out_dir: Path) -> dict:
         "--write-info-json",
         "--write-subs",
         "--write-auto-subs",
-        "--sub-langs", "en.*",
+        "--sub-langs", "de.*,en.*",
         "--sub-format", "vtt",
         "--convert-subs", "vtt",
         "--no-playlist",
@@ -132,7 +138,7 @@ def download_url(
         "--write-info-json",
         "--write-subs",
         "--write-auto-subs",
-        "--sub-langs", "en.*",
+        "--sub-langs", "de.*,en.*",
         "--sub-format", "vtt",
         "--convert-subs", "vtt",
         "--no-playlist",
