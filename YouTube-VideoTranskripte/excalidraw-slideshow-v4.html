@@ -1,0 +1,339 @@
+<meta charset="utf-8">
+<title>Excalidraw Slideshow v4 in Obsidian</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EDEEE8;
+  --paper-raised:#F7F7F3;
+  --ink:#1B1D1F;
+  --ink-soft:#4C4E47;
+  --ink-faint:#5E6058;
+  --line:#D4D5CA;
+  --line-strong:#B9BBAE;
+  --accent:#B5652F;
+  --accent-deep:#7C401D;
+  --accent-soft:#F0DFC9;
+  --accent-2:#2F6E64;
+  --accent-2-soft:#DCEAE4;
+  --code-bg:#1B1D1F;
+  --code-fg:#EDEEE8;
+  --code-accent:#E3A15C;
+  --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(27,29,31,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+    --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+    --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+    --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+    --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+    --shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+  --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+  --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+  --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+  --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(0,0,0,0.4);
+}
+
+*{box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.65;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+@media (max-width:480px){ .wrap{padding:2rem 1rem 4rem;} }
+
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--accent-deep);display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+h1{font-family:'IBM Plex Serif',Georgia,serif;font-weight:600;font-size:34px;line-height:1.18;text-wrap:balance;margin:0.5rem 0 0.6rem;letter-spacing:-0.01em;}
+h2{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:20px;margin:0;text-wrap:balance;}
+h3{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:16px;margin:0;}
+
+.source-card{display:flex;align-items:center;gap:0.9rem;margin:0 0 1.75rem;}
+.source-thumb{flex:none;width:128px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:0.5px solid var(--line);display:block;}
+@media (max-width:480px){ .source-thumb{width:96px;} }
+.source-line{font-size:14.5px;color:var(--ink-soft);margin:0;}
+.source-line a{color:var(--accent-deep);text-decoration:none;border-bottom:0.5px solid currentColor;}
+.source-line a:hover{color:var(--accent);}
+
+.lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin:0 0 2.25rem;}
+
+/* Tools */
+.tools{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:2.5rem;
+}
+@media (max-width:520px){ .tools{grid-template-columns:1fr;} }
+.tool-card{
+  background:var(--paper-raised);
+  border:0.5px solid var(--line);
+  border-radius:12px;
+  padding:1rem 1.15rem;
+}
+.tool-card .role{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color:var(--accent-deep);
+  display:block;
+  margin-bottom:0.3rem;
+}
+.tool-card h3{margin-bottom:0.35rem;}
+.tool-card p{font-size:14.5px;color:var(--ink-soft);margin:0;}
+
+/* TOC */
+.toc{
+  border-top:0.5px solid var(--line-strong);
+  border-bottom:0.5px solid var(--line-strong);
+  padding:1rem 0;
+  margin-bottom:2.75rem;
+}
+.toc-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:var(--ink-faint);
+  margin-bottom:0.6rem;
+}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;}
+@media (max-width:520px){ .toc-grid{grid-template-columns:1fr;} }
+.toc-grid a{display:flex;align-items:baseline;gap:8px;font-size:14.5px;color:var(--ink-soft);text-decoration:none;padding:4px 0;}
+.toc-grid a:hover{color:var(--accent-deep);}
+.toc-grid .n{font-family:'IBM Plex Mono',monospace;color:var(--accent-deep);font-size:12.5px;width:1.2em;flex:none;}
+.toc-grid .t{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);margin-left:auto;}
+
+/* Steps */
+.entry{padding:1.5rem 0;border-top:0.5px solid var(--line);scroll-margin-top:1rem;}
+.entry:first-of-type{border-top:none;}
+.entry-head{display:flex;align-items:flex-start;gap:0.85rem;margin-bottom:0.9rem;}
+.entry-num{
+  font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--accent-deep);background:var(--accent-soft);
+  width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:2px;
+}
+.entry-titles{flex:1;min-width:0;}
+.entry-meta{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap;}
+.timestamp{font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--ink-faint);}
+.timestamp a{color:inherit;text-decoration:none;border-bottom:0.5px dotted var(--ink-faint);}
+.timestamp a:hover{color:var(--accent-deep);border-color:var(--accent-deep);}
+
+.entry-body{display:grid;gap:0.75rem;padding-left:calc(28px + 0.85rem);}
+@media (max-width:480px){ .entry-body{padding-left:14px;} }
+.field{display:grid;gap:0.3rem;}
+.field-label{
+  font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-faint);
+}
+.field p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-soft);max-width:64ch;}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--line-strong);font-size:13.5px;color:var(--ink-faint);}
+footer a{color:var(--accent-deep);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Selbststudium-Zusammenfassung des YouTube-Videos „Getting Started with Obsidian Excalidraw Slideshow v4“ von Zsolt: Präsentationen aus Excalidraw-Zeichnungen erstellen.</h2>
+
+  <p class="eyebrow">Selbststudium &middot; Video-Transkript</p>
+  <h1>Excalidraw Slideshow v4 in Obsidian</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/7DDY8rRDzdU" target="_blank" rel="noopener">
+      <img class="source-thumb" src="data:image/jpeg;base64,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" alt="Video-Vorschaubild">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/7DDY8rRDzdU" target="_blank" rel="noopener">„Getting Started with Obsidian Excalidraw Slideshow v4“</a>
+      &middot; Zsolt's Visual PKM &middot; 23 Min &middot; Original Englisch, von Claude übersetzt
+    </p>
+  </div>
+  <p class="lede">
+    Walkthrough des Slideshow-Skripts v4 für das Excalidraw-Plugin: aus einer Excalidraw-Zeichnung werden Präsentationen. Das YouTube-Video deckt die ersten Kapitel ab (vor allem frame-basierte Präsentationen); der volle Kurs liegt in Zsolts Sketchnote-Mind-Community.
+  </p>
+
+  <div class="tools">
+    <div class="tool-card">
+      <span class="role">Folientyp</span>
+      <h3>Frame-basiert</h3>
+      <p>Jede Folie ist ein gezeichneter Frame. Im Video behandelt.</p>
+    </div>
+    <div class="tool-card">
+      <span class="role">Folientyp</span>
+      <h3>Line-basiert</h3>
+      <p>Folien aus Textzeilen. Nur erwähnt, im Kurs behandelt.</p>
+    </div>
+    <div class="tool-card">
+      <span class="role">Frame-Typ</span>
+      <h3>Normale Frames</h3>
+      <p>Erfassen enthaltene Elemente und erscheinen im Export/PDF – können die Zeichnung ungewollt verändern.</p>
+    </div>
+    <div class="tool-card">
+      <span class="role">Frame-Typ &middot; empfohlen</span>
+      <h3>Marker-Frames</h3>
+      <p>Erfassen nichts und werden nie gedruckt. Zsolts Favorit für Slideshows.</p>
+    </div>
+  </div>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Ablauf</p>
+    <div class="toc-grid">
+      <a href="#s1"><span class="n">01</span><span class="t">Installieren</span></a>
+      <a href="#s2"><span class="n">02</span><span class="t">Slideshow erstellen</span></a>
+      <a href="#s3"><span class="n">03</span><span class="t">Starten</span></a>
+      <a href="#s4"><span class="n">04</span><span class="t">Buttons &amp; Panel</span></a>
+      <a href="#s5"><span class="n">05</span><span class="t">Benennen &amp; Ausschliessen</span></a>
+      <a href="#s6"><span class="n">06</span><span class="t">Frame-Typen</span></a>
+      <a href="#s7"><span class="n">07</span><span class="t">Seitenverhältnis</span></a>
+    </div>
+  </nav>
+
+  <section class="entries">
+    <article class="entry" id="s1">
+      <div class="entry-head">
+        <span class="entry-num">01</span>
+        <div class="entry-titles">
+          <h2>Slideshow-Skript installieren</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/7DDY8rRDzdU?t=218" target="_blank" rel="noopener">ab 3:38</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Was</span>
+          <p>Das Slideshow-Skript kommt aus der Excalidraw-Script-Library, nicht aus den Community-Plugins.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Wie</span>
+          <p>Im Obsidian-Tools-Panel auf „Install or update script“ klicken – die Library öffnet sich, „Slideshow“ steht zuoberst (oder per Suche) – installieren.</p>
+        </div>
+      </div>
+    </article>
+    <article class="entry" id="s2">
+      <div class="entry-head">
+        <span class="entry-num">02</span>
+        <div class="entry-titles">
+          <h2>Erste Slideshow erstellen</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/7DDY8rRDzdU?t=266" target="_blank" rel="noopener">ab 4:26</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Was</span>
+          <p>Eine Slideshow entsteht aus gezeichneten Frames auf der Excalidraw-Leinwand.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Wie</span>
+          <p>Frame hinzufügen (More-Tools-Menü → Frame-Werkzeug, oder Taste F), mehrere Frames anlegen, Frame auswählen und Slideshow starten.</p>
+        </div>
+      </div>
+    </article>
+    <article class="entry" id="s3">
+      <div class="entry-head">
+        <span class="entry-num">03</span>
+        <div class="entry-titles">
+          <h2>Slideshow starten</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/7DDY8rRDzdU?t=347" target="_blank" rel="noopener">ab 5:47</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Was</span>
+          <p>Mehrere Startwege und Modifier bestimmen Fenster- oder Vollbild-Lauf.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Wie</span>
+          <p>Slideshow-Button per Long-Click an die Seitenleiste pinnen. Alt/Option = Lauf im Fenster, ohne Modifier = Vollbild. Beim ersten Mal „Auto start“ bestätigen (neu in Excalidraw 2.2.7). Navigation mit Pfeiltasten; alternativ Command Palette → „slide show“.</p>
+        </div>
+      </div>
+    </article>
+    <article class="entry" id="s4">
+      <div class="entry-head">
+        <span class="entry-num">04</span>
+        <div class="entry-titles">
+          <h2>Buttons & Side Panel</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/7DDY8rRDzdU?t=548" target="_blank" rel="noopener">ab 9:08</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Was</span>
+          <p>Als Slideshow markierte Zeichnungen bekommen oben Steuer-Buttons.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Wie</span>
+          <p>Der Stift-Button öffnet das Side Panel (Slideshow bearbeiten); darin lässt sich die Präsentation starten und die Folienliste einsehen.</p>
+        </div>
+      </div>
+    </article>
+    <article class="entry" id="s5">
+      <div class="entry-head">
+        <span class="entry-num">05</span>
+        <div class="entry-titles">
+          <h2>Benennen & Folien ausschliessen</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/7DDY8rRDzdU?t=618" target="_blank" rel="noopener">ab 10:18</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Was</span>
+          <p>Auf einer Zeichnung können mehrere Präsentationen liegen; Folien lassen sich benennen und ausblenden.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Wie</span>
+          <p>Slideshow und einzelne Folien benennen (neu: Reihenfolge unabhängig vom Namen). Folienname: Frame auswählen + Enter. Einzelne Folien von der Slideshow ausschliessen – die Präsentation hält dort nicht an.</p>
+        </div>
+      </div>
+    </article>
+    <article class="entry" id="s6">
+      <div class="entry-head">
+        <span class="entry-num">06</span>
+        <div class="entry-titles">
+          <h2>Frame-Typen: normal vs. Marker</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/7DDY8rRDzdU?t=885" target="_blank" rel="noopener">ab 14:45</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Was</span>
+          <p>Der Frame-Typ entscheidet, ob Elemente erfasst und ob der Rahmen exportiert wird.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Wie</span>
+          <p>Normale Frames erfassen Inhalte (Verschieben bewegt/beschneidet sie, Verbindungen können reissen) und erscheinen im Export/PDF. Marker-Frames (empfohlen) erfassen nichts und werden nie gedruckt. Umschalten im Element-Properties-Panel.</p>
+        </div>
+      </div>
+    </article>
+    <article class="entry" id="s7">
+      <div class="entry-head">
+        <span class="entry-num">07</span>
+        <div class="entry-titles">
+          <h2>Foliengrösse & Seitenverhältnis</h2>
+          <div class="entry-meta"><span class="timestamp"><a href="https://youtu.be/7DDY8rRDzdU?t=1146" target="_blank" rel="noopener">ab 19:06</a></span></div>
+        </div>
+      </div>
+      <div class="entry-body">
+        <div class="field">
+          <span class="field-label">Was</span>
+          <p>Der sichtbare Ausschnitt hängt vom Bildschirm-Seitenverhältnis ab – seitliche Elemente können ungewollt auftauchen.</p>
+        </div>
+        <div class="field">
+          <span class="field-label">Wie</span>
+          <p>Button „Frame an Bildschirm-Seitenverhältnis anpassen“ nutzen. Standard HD 1920×1080. Von der aktuellen Folie starten: Alt+Shift (Alt = Fenster, Shift = ab letzter Folie).</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <footer>
+    <p>Selbststudium-Zusammenfassung &middot; Original Englisch, übersetzt &amp; transkribiert mit <a href="https://github.com/yabba-ch/youtubetranskript">/watch</a>.</p>
+    <p><a href="index.html">&larr; Zurück zur Übersicht</a> &middot; <a href="https://github.com/yabba-ch/youtubetranskript">GitHub Repository</a></p>
+  </footer>
+</div>
