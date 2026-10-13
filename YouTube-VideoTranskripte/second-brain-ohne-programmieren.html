@@ -1,0 +1,349 @@
+<meta charset="utf-8">
+<title>Der echte Weg zum Second Brain</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EDEEE8;
+  --paper-raised:#F7F7F3;
+  --ink:#1B1D1F;
+  --ink-soft:#4C4E47;
+  --ink-faint:#5E6058;
+  --line:#D4D5CA;
+  --line-strong:#B9BBAE;
+  --accent:#B5652F;
+  --accent-deep:#7C401D;
+  --accent-soft:#F0DFC9;
+  --accent-2:#2F6E64;
+  --accent-2-soft:#DCEAE4;
+  --code-bg:#1B1D1F;
+  --code-fg:#EDEEE8;
+  --code-accent:#E3A15C;
+  --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(27,29,31,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+    --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+    --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+    --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+    --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+    --shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+  --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+  --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+  --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+  --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(0,0,0,0.4);
+}
+
+*{box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.65;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+@media (max-width:480px){ .wrap{padding:2rem 1rem 4rem;} }
+
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--accent-deep);display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+h1{font-family:'IBM Plex Serif',Georgia,serif;font-weight:600;font-size:34px;line-height:1.18;text-wrap:balance;margin:0.5rem 0 0.6rem;letter-spacing:-0.01em;}
+h2{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:19px;margin:0;text-wrap:balance;}
+h3{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 0.9rem;}
+
+.source-card{display:flex;align-items:center;gap:0.9rem;margin:0 0 1.75rem;}
+.source-thumb{flex:none;width:128px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:0.5px solid var(--line);display:block;}
+@media (max-width:480px){ .source-thumb{width:96px;} }
+.source-line{font-size:14.5px;color:var(--ink-soft);margin:0;}
+.source-line a{color:var(--accent-deep);text-decoration:none;border-bottom:0.5px solid currentColor;}
+.source-line a:hover{color:var(--accent);}
+
+.lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin:0 0 2rem;}
+
+.kontextbox{
+  background:var(--paper-raised);border:0.5px solid var(--line);border-left:2px solid var(--accent-2);
+  border-radius:0 10px 10px 0;padding:0.9rem 1.1rem;font-size:15px;color:var(--ink-soft);margin-bottom:2.75rem;
+}
+.kontextbox strong{color:var(--ink);font-weight:500;}
+
+.toc{border-top:0.5px solid var(--line-strong);border-bottom:0.5px solid var(--line-strong);padding:1rem 0;margin-bottom:3rem;}
+.toc-label{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.6rem;}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;}
+@media (max-width:520px){ .toc-grid{grid-template-columns:1fr;} }
+.toc-grid a{display:flex;align-items:baseline;gap:8px;font-size:14.5px;color:var(--ink-soft);text-decoration:none;padding:4px 0;}
+.toc-grid a:hover{color:var(--accent-deep);}
+.toc-grid .n{font-family:'IBM Plex Mono',monospace;color:var(--accent-deep);font-size:12.5px;width:1.4em;flex:none;}
+
+.cluster{margin-bottom:2.75rem;}
+.cluster-head{display:flex;align-items:baseline;gap:10px;margin-bottom:1.1rem;padding-bottom:0.6rem;border-bottom:0.5px solid var(--line-strong);}
+.cluster-head h2{flex:1;}
+.cluster-range{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);}
+
+.trick{display:grid;grid-template-columns:36px 1fr;gap:0.85rem;padding:1rem 0;border-top:0.5px solid var(--line);scroll-margin-top:1rem;}
+.trick:first-child{border-top:none;}
+.trick-num{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--accent-deep);background:var(--accent-soft);
+  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;
+}
+@media (max-width:480px){
+  .trick{grid-template-columns:30px 1fr;gap:0.65rem;}
+  .trick-num{width:26px;height:26px;font-size:11.5px;border-radius:7px;}
+}
+.trick-title-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 0.35rem;}
+.trick-title{font-size:16px;font-weight:500;margin:0;color:var(--ink);}
+.trick-time{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);text-decoration:none;white-space:nowrap;flex:none;}
+.trick-time:hover{color:var(--accent-deep);}
+.trick p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-soft);max-width:64ch;}
+.trick p + p{margin-top:0.5rem;}
+
+.inline-code{
+  font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);
+  padding:1px 6px;border-radius:4px;font-size:13.5px;
+}
+
+.trick-shot{
+  display:block;width:100%;max-width:480px;border-radius:8px;border:0.5px solid var(--line);
+  box-shadow:var(--shadow);margin-top:0.7rem;
+}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--line-strong);font-size:13.5px;color:var(--ink-faint);}
+footer a{color:var(--accent-deep);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Selbststudium-Zusammenfassung des YouTube-Videos „Der echte Weg zum Second Brain: Ohne Programmieren. Vergiss Obsidian." von The Node AI: wie man mit Claude Code ein lokales Second Brain mit Bedeutungssuche, KI-gepflegtem Wiki und Widerspruchsprüfung baut.</h2>
+
+  <p class="eyebrow">Selbststudium &middot; Video-Transkript</p>
+  <h1>Der echte Weg zum Second Brain</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/mHSOsy_usAg" target="_blank" rel="noopener">
+      <img class="source-thumb" src="data:image/jpeg;base64,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" alt="Videovorschau">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/mHSOsy_usAg" target="_blank" rel="noopener">„Der echte Weg zum Second Brain: Ohne Programmieren. Vergiss Obsidian."</a>
+      &middot; The Node AI | AI Automation &middot; 45 Min &middot; automatisch transkribiert
+    </p>
+  </div>
+  <p class="lede">
+    Wissen sammeln ist leicht &ndash; Wissen wiederfinden und ihm vertrauen ist das eigentliche Problem. Das Video zeigt, wie mit Claude Code ein lokales System über rund 2000 Notizen entsteht: Bedeutungssuche, ein von der KI gepflegtes Wiki mit Widerspruchsprüfung und eine Webapp als reines Fenster darauf.
+  </p>
+
+  <div class="kontextbox">
+    <strong>Der Kerngedanke:</strong> Zuerst das System bauen, das Auffindbarkeit und Vertrauen sicherstellt &ndash; die schöne Graph-Optik kommt zuletzt und ist austauschbar. Markdown bleibt die einzige Wahrheit, deterministischer Code erledigt das Stumpfe, KI kommt nur dort zum Einsatz, wo Verstehen nötig ist, und der Mensch entscheidet.
+  </div>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Inhalt</p>
+    <div class="toc-grid">
+      <a href="#t1"><span class="n">01</span>Wissen sammeln ist leicht, Vertrauen ist schwer</a>
+      <a href="#t2"><span class="n">02</span>Vier Fähigkeiten statt Tools</a>
+      <a href="#t3"><span class="n">03</span>Der 6-Schritte-Prozess</a>
+      <a href="#t4"><span class="n">04</span>Drei Rollen für Referenzen</a>
+      <a href="#t5"><span class="n">05</span>Fünf Bausteine, wenig KI</a>
+      <a href="#t6"><span class="n">06</span>Baustein 1: Workspace</a>
+      <a href="#t7"><span class="n">07</span>Baustein 2: Indexer (ohne KI)</a>
+      <a href="#t8"><span class="n">08</span>Baustein 3: Suche mit QMD</a>
+      <a href="#t9"><span class="n">09</span>Baustein 4: Claude und das Regelwerk «Brain First»</a>
+      <a href="#t10"><span class="n">10</span>Baustein 5: Webapp als reine Leseoberfläche</a>
+      <a href="#t11"><span class="n">11</span>Wiki-Schicht: Claude als Bibliothekar</a>
+      <a href="#t12"><span class="n">12</span>Die Falle: Widersprüche erkennen</a>
+      <a href="#t13"><span class="n">13</span>52 echte Konfliktstellen im eigenen Bestand</a>
+      <a href="#t14"><span class="n">14</span>Geschwindigkeits-Benchmark</a>
+      <a href="#t15"><span class="n">15</span>Der teure Fehler: Optik nur beschreiben</a>
+      <a href="#t16"><span class="n">16</span>Zielbilder statt Beschreibungen</a>
+      <a href="#t17"><span class="n">17</span>Warum eine eigene App statt Obsidian?</a>
+      <a href="#t18"><span class="n">18</span>Sieben Lektionen</a>
+      <a href="#t19"><span class="n">19</span>Dein Einstieg in ca. einer Stunde</a>
+    </div>
+  </nav>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Das Problem &amp; die Leitfrage</h2><span class="cluster-range">01&ndash;02</span></div>
+
+    <div class="trick" id="t1">
+      <span class="trick-num">01</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Wissen sammeln ist leicht, Vertrauen ist schwer</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=2" target="_blank" rel="noopener">ab 0:02</a></div>
+        <p>Fast 2000 Notizen, über 4000 Dateien – und trotzdem: Die Standardsuche arbeitet mit Wörtern statt Bedeutung, und Widersprüche, Duplikate oder veraltete Stände fallen nicht auf. Beispiel: Ein Ziel im Strategiedokument und die realen Auswertungen in einer anderen Notiz sagten monatelang etwas völlig anderes, ohne dass es jemand merkte.</p>
+        <p>Die Leitfrage am Projektanfang: Wie wird aus gesammeltem Wissen ein System, dem ich vertrauen kann, statt ein wachsender Müllhaufen? Zuerst das System bauen, das diese Frage beantwortet – die Optik ist nur ein Fenster und kommt zum Schluss.</p>
+      </div>
+    </div>
+    <div class="trick" id="t2">
+      <span class="trick-num">02</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Vier Fähigkeiten statt Tools</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=210" target="_blank" rel="noopener">ab 3:30</a></div>
+        <p>Bevor ein Tool gewählt wird, werden Fähigkeiten aufgeschrieben: (1) relevante Informationen in Sekunden finden, auch ohne das exakte Wort; (2) im selben System lesen; (3) sauber bleiben, also Widersprüche, Duplikate und veraltete Stände selbst erkennen und Wissen verdichten; (4) Überblick über das Gesamtsystem.</p>
+        <p>Randbedingung: Wissensbasis, Index, Graph und Suche laufen komplett lokal. Nur ausgewählte Ausschnitte gehen ans Modell, wenn Claude analysiert oder das Wiki pflegt. Tipp zum Mitnehmen: 10 Minuten lang 3–5 konkrete, prüfbare Fähigkeiten für das eigene System aufschreiben.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Vorgehen: Prozess &amp; Referenzen</h2><span class="cluster-range">03&ndash;04</span></div>
+
+    <div class="trick" id="t3">
+      <span class="trick-num">03</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Der 6-Schritte-Prozess</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=370" target="_blank" rel="noopener">ab 6:10</a></div>
+        <p>Die Schritte 2–5 stammen aus dem Claude-Code-Skillpaket <span class="inline-code">Superpowers</span>, das die KI in einen Ingenieursprozess zwingt: erst Fragen, dann Dokument, dann Plan, dann Bauen – mit Freigabe durch den Menschen an jedem Übergang. Vier von sechs Schritten passieren, bevor die erste Zeile Code entsteht.</p>
+        <p><b>1 Datenbasis ordnen</b> (Vault in Cluster; die beste Suche findet in einem Chaos-Vault nur das Chaos schneller). <b>2 Brainstorming</b> (Claude fragt einzeln, schlägt 2–3 Ansätze vor, Mensch entscheidet, noch kein Code). <b>3 Spezifikation</b> (schriftlich, abschnittsweise freigegeben, der «Vertrag»; ca. 30 Minuten bis Baustart). <b>4 Plan</b> (14 Kernaufgaben, je mit Test und Fertigkriterium). <b>5 Bauen</b> (pro Aufgabe ein frischer Subagent, danach Prüfung; der Mensch liest keinen Code, sondern prüft Ergebnisse). <b>6 Testen</b>.</p>
+      </div>
+    </div>
+    <div class="trick" id="t4">
+      <span class="trick-num">04</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Drei Rollen für Referenzen</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=700" target="_blank" rel="noopener">ab 11:40</a></div>
+        <p>Referenzen sind keine Kopiervorlagen, sondern haben je eine Rolle: <b>Baustein</b> (fertiges Teil direkt einbauen, hier <span class="inline-code">QMD</span>, die lokale Hybridsuche von Tobi Lütke), <b>Muster</b> (Idee übernehmen und selbst umsetzen, hier Andrej Karpathys Beschreibung eines KI-gepflegten Wissens-Wikis) und <b>Messlatte</b> (legt fest, wie gut das Ergebnis aussehen muss, hier KI-generierte Mockups der Zieloptik).</p>
+        <p>Auch Verwerfen ist ein Ergebnis: Aus <span class="inline-code">GBrain</span> und <span class="inline-code">Graphify</span> wurde kein Code übernommen, aber das Muster «Markdown als einzige Wahrheit, der Graph nur ein abgeleiteter Zwischenstand».</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Die Architektur</h2><span class="cluster-range">05&ndash;10</span></div>
+
+    <div class="trick" id="t5">
+      <span class="trick-num">05</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Fünf Bausteine, wenig KI</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=930" target="_blank" rel="noopener">ab 15:30</a></div>
+        <p>Farbcode des Architekturbilds: Orange = deine Daten, Grün = deterministischer Code (immer gleich, kostenlos), Lila = KI. Wenig Lila ist Absicht: KI nur dort, wo Verstehen nötig ist, alles Stumpfe macht normaler Code.</p>
+      </div>
+    </div>
+    <div class="trick" id="t6">
+      <span class="trick-num">06</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Baustein 1: Workspace</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=984" target="_blank" rel="noopener">ab 16:24</a></div>
+        <p>Der geordnete Vault plus Code-Projekte, Skills, CLAUDE.md, Memory und Connectors. Zentrale Regel: <b>Markdown ist die einzige Wahrheit</b> – keine Datenbank, kein eigenes Format. Jedes andere Teil ist eine abgeleitete, jederzeit wegwerfbare Sicht. Der Ordner <span class="inline-code">09 Wiki</span> wird ausschliesslich von Claude gepflegt.</p>
+      </div>
+    </div>
+    <div class="trick" id="t7">
+      <span class="trick-num">07</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Baustein 2: Indexer (ohne KI)</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=1033" target="_blank" rel="noopener">ab 17:13</a></div>
+        <p>Ein kleines Programm geht wie ein Bibliothekar durch alle Ordner und notiert pro Datei Titel, Ort, Grösse, Verlinkungen, Tags und Cluster. Daraus entstehen zwei Dateien: eine Landkartendatei (füttert die Graphansicht) und eine <span class="inline-code">index.md</span> (Katalog, eine Zeile pro Bereich oder wichtiger Datei), die Claude als Erstes liest.</p>
+        <p>Drei Regeln: Markdown ist die Wahrheit; die Landkarte ist nur Zwischenstand und wird bei jedem Lauf neu erzeugt; Auslesen ist strikt vom Anzeigen getrennt. Vorgehen zum Nachbauen: Muster festlegen, Spezifikation schreiben, von Claude in vier kleinen Aufgaben mit Tests bauen lassen.</p>
+      </div>
+    </div>
+    <div class="trick" id="t8">
+      <span class="trick-num">08</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Baustein 3: Suche mit QMD</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=1179" target="_blank" rel="noopener">ab 19:39</a></div>
+        <p>Kombination aus klassischer Stichwortsuche und Bedeutungssuche: Ein kleines Modell trägt jede Notiz auf eine «Landkarte der Bedeutungen» ein, die Frage kommt an dieselbe Stelle, die nächsten Nachbarn sind die Treffer – ganz ohne Wortübereinstimmung.</p>
+        <p>Drei kleine lokale Modelle (zusammen unter 3 GB): eines versteht die Frage und ergänzt verwandte Begriffe, eines ordnet Notizen und Fragen auf der Karte ein, eines sortiert die Treffer final (Reranking). Nutzbar im Terminal, durch Claude und in der Webapp.</p>
+      </div>
+    </div>
+    <div class="trick" id="t9">
+      <span class="trick-num">09</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Baustein 4: Claude und das Regelwerk «Brain First»</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=1328" target="_blank" rel="noopener">ab 22:08</a></div>
+        <p>Entscheidend ist nicht die KI, sondern die CLAUDE.md mit der <b>Suchleiter</b>: (1) <span class="inline-code">index.md</span> lesen, (2) im Wiki nachsehen, (3) QMD-Suche, (4) genau eine beste Datei öffnen, (5) antworten. Der ganze Vault landet so nie im Kontextfenster; pro Frage werden nur Katalog und wenige relevante Dateien geladen, ein paar tausend Token. Der Trick ist kein grösseres Kontextfenster, sondern ein System, das keins braucht.</p>
+        <p>Rückkanal: Claude liest nicht nur, sondern pflegt auch das Wiki im Vault.</p>
+      </div>
+    </div>
+    <div class="trick" id="t10">
+      <span class="trick-num">10</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Baustein 5: Webapp als reine Leseoberfläche</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=1435" target="_blank" rel="noopener">ab 23:55</a></div>
+        <p>Die App liest die Landkartendatei und zeichnet den Graphen, öffnet angeklickte Notizen daneben und trägt die Suchbox. Sie schreibt und entscheidet nie, und kein anderer Baustein braucht sie. Fazit des Kapitels: Vault ordnen, QMD installieren, Regelwerk als Textdatei – den einzigen echten Code (Indexer) schreibt Claude. Programmieren muss man dafür nicht können.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Praxistest</h2><span class="cluster-range">11&ndash;14</span></div>
+
+    <div class="trick" id="t11">
+      <span class="trick-num">11</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Wiki-Schicht: Claude als Bibliothekar</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=1544" target="_blank" rel="noopener">ab 25:44</a></div>
+        <p>Im Ordner <span class="inline-code">09 Wiki</span> gelten feste Regeln aus einer Schemadatei: Seitentypen sind Quellenzusammenfassungen, Themenseiten, Personen- und Projektseiten sowie Syntheseseiten, alles quervernetzt. Beim <b>Ingest</b> einer neuen Quelle bestimmt Claude über das Seitenverzeichnis, welche Seiten betroffen sind, öffnet nur diese, aktualisiert sie, legt fehlende an, setzt Verweise und prüft jeweils, ob die neue Information dem Bestehenden widerspricht.</p>
+        <p>Aufrufbar im Terminal, in der Claude-Code-App oder in Obsidian über ein Plugin wie <span class="inline-code">Claudian</span>. Der Ingest läuft bewusst nicht in der Webapp.</p>
+      </div>
+    </div>
+    <div class="trick" id="t12">
+      <span class="trick-num">12</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Die Falle: Widersprüche erkennen</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=1711" target="_blank" rel="noopener">ab 28:31</a></div>
+        <p>Test mit einer präparierten Inbox-Notiz mit drei versteckten falschen Aussagen: Alle drei wurden gefangen und auf den betroffenen Seiten markiert. Eine vierte, harmlose Aussage wurde nicht markiert, sondern korrekt eingearbeitet.</p>
+        <p>Wichtigste Eigenschaft: Das System überschreibt nichts. Beide Aussagen bleiben mit Quelle stehen, die Entscheidung trifft der Mensch.</p>
+      </div>
+    </div>
+    <div class="trick" id="t13">
+      <span class="trick-num">13</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">52 echte Konfliktstellen im eigenen Bestand</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=1812" target="_blank" rel="noopener">ab 30:12</a></div>
+        <p>Beim Einarbeiten des echten Bestands markierte das Wiki 52 Konfliktstellen: echte Widersprüche, veraltete Stände und vermischte Soll/Ist-Aussagen, darunter das Beispiel vom Anfang (Zielwert Wiedergabedauer vs. reale Werte).</p>
+        <p>Umgang: Ein Fund ist eine Aufgabe. <b>Die Quelle reparieren, nicht den Warnhinweis löschen</b>, sonst findet der nächste Durchlauf denselben Konflikt. Erst dann «entschieden, so gilt es»: Das Wiki zieht nach, der Kasten verschwindet, die Entscheidung steht im Protokoll. Jeder Durchlauf wird protokolliert.</p>
+      </div>
+    </div>
+    <div class="trick" id="t14">
+      <span class="trick-num">14</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Geschwindigkeits-Benchmark</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=1942" target="_blank" rel="noopener">ab 32:22</a></div>
+        <p>Dieselben fünf echten Arbeitsfragen, einmal ohne und einmal mit dem System. Ergebnis: rund 50 % weniger Token, rund 40 % weniger Zeit, in beiden Läufen 5 von 5 richtige Antworten. Die teuerste Frage kostete ohne System über eine halbe Million Token, weil jeder Suchschritt den bisherigen Verlauf neu einliest; mit System war die Suche nach zwei Schritten beendet (ein Drittel der Kosten).</p>
+        <p>Einordnung: keine wissenschaftliche Studie. Bei einfachen Fragen im geladenen Kontext gewinnt die normale Session; das System gewinnt bei tief vergrabenem Wissen und Fragen über mehrere Dateien. Der eigentliche Test: Nutze ich es noch, wenn die Begeisterung weg ist?</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Die Optik</h2><span class="cluster-range">15&ndash;17</span></div>
+
+    <div class="trick" id="t15">
+      <span class="trick-num">15</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Der teure Fehler: Optik nur beschreiben</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=2070" target="_blank" rel="noopener">ab 34:30</a></div>
+        <p>Wer der KI per Text sagt «dichter, 3D, weniger Glow», spielt ein Ratespiel; das Problem sind die Beschreibungen, nicht die KI. Claude ist stark darin, Referenzen nachzubauen, kann aber nicht erraten, wie es im eigenen Kopf aussieht.</p>
+      </div>
+    </div>
+    <div class="trick" id="t16">
+      <span class="trick-num">16</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Zielbilder statt Beschreibungen</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=2122" target="_blank" rel="noopener">ab 35:22</a></div>
+        <p>Zuerst werden mit ChatGPT (Bildgenerierung) Zielbilder erzeugt: Globus mit getrennten Wissenswelten, Clusteransicht, eine Ringstruktur des Gesamtsystems (innen CLAUDE.md, Memory, Skills, Plugins, Connectors; aussen externe Dienste) und später eine Ebenenansicht. Übernommene Ideen: Cluster räumlich getrennt, Verbindungen erst bei Hover, Kugelgrösse als Wissensmenge, Detailfenster seitlich. Inspiration auch über Pinterest («Wissensgraph», «Big Data Cloud»).</p>
+        <p>Bauregel: Claude setzt einen Schritt um, der Mensch prüft im Browser gegen das Zielbild, erst nach Abnahme folgt der nächste Schritt.</p>
+      </div>
+    </div>
+    <div class="trick" id="t17">
+      <span class="trick-num">17</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Warum eine eigene App statt Obsidian?</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=2306" target="_blank" rel="noopener">ab 38:26</a></div>
+        <p>Drei Gründe: (1) Obsidian sieht nur Notizen, das Gesamtsystem ist grösser (Projekte, Skills, Memory, Connectors). (2) Gesundheitsblick: welche Cluster wachsen, was liegt verwaist herum. (3) Lesen und Weiterklicken auch ausserhalb des Vaults. Wenn Obsidian reicht, kann man sich die App sparen.</p>
+        <p>Die Suchbox bietet Bedeutungssuche über die schnelle QMD-Variante (Frageversteher und Embedding-Modell, ohne Feinsortierer): komplett lokal, rund 2 Sekunden Rechenzeit pro Suche, keine API-Kosten, offline nutzbar. Token verbraucht nur Claude, wenn es wirklich denkt. Die Optik ist austauschbar, das Fundament bleibt.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Lektionen &amp; Einstieg</h2><span class="cluster-range">18&ndash;19</span></div>
+
+    <div class="trick" id="t18">
+      <span class="trick-num">18</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Sieben Lektionen</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=2500" target="_blank" rel="noopener">ab 41:40</a></div>
+        <p>(1) Referenzen schlagen Beschreibungen. (2) Kleine Schritte mit Abnahme, nie alles auf einmal. (3) Erst entscheiden, dann bauen – die Spezifikation ist der Vertrag. (4) Deterministisch, wo es geht; KI nur, wo Verstehen nötig ist. (5) Markdown bleibt die einzige Wahrheit. (6) Jede Behauptung braucht einen Prüfpunkt. (7) Der Mensch entscheidet, die KI liefert.</p>
+      </div>
+    </div>
+    <div class="trick" id="t19">
+      <span class="trick-num">19</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Dein Einstieg in ca. einer Stunde</p><a class="trick-time" href="https://youtu.be/mHSOsy_usAg?t=2580" target="_blank" rel="noopener">ab 43:00</a></div>
+        <p>Der Kern (finden und vertrauen) geht ohne eigenen Code: (1) Notizen gemeinsam mit Claude Code in Themencluster ordnen, (2) eine Indexdatei als Katalog anlegen lassen, (3) <span class="inline-code">QMD</span> installieren und initialisieren, (4) Brain-First-Regeln in die CLAUDE.md schreiben: erst Katalog, dann Suche, dann genau eine Datei. Kein Graph, keine App, kein Wiki nötig – das kommt, wenn sich das Fundament bewährt.</p>
+        <p>Merksatz: Die KI schreibt den Code; du kuratierst die Referenzen, entscheidest und nimmst jeden Schritt ab.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Zusammengefasst aus dem Video-Transkript für das Selbststudium &middot; Original auf Deutsch &middot;
+    <a href="https://youtu.be/mHSOsy_usAg" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>
