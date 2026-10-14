@@ -25,7 +25,8 @@ status: aktiv
 ### 2. HTML-Seite (dieses Repo)
 - Neue HTML-Datei in `YouTube-VideoTranskripte/`
 - **Dateiname:** Kebab-Case, beschreibend, z. B. `zwanzig-claude-code-tricks.html`
-- Eintrag in `index.html` hinzufügen
+- Eintrag in `YouTube-VideoTranskripte/index.html` hinzufügen: neue `entry-card` in der passenden Kategorie (oder neue Kategorie), **mit Vorschaubild** (YouTube `hqdefault.jpg` als Base64-Data-URI, gleiches Format wie die anderen Karten) und `data-date="YYYY-MM-DDTHH:MM"` (Erstellungszeitpunkt) auf dem `<a class="entry-card">`; Meta-Zeile: Kanal · Dauer · Datum (TT.MM.JJJJ). Zähler, Kategorien, Minuten, Sortierung (neueste zuerst), Suche und «Nur die letzten 3» berechnet das Skript in der Seite selbst.
+- Auf der Detailseite oben ebenfalls das Vorschaubild (`source-thumb`) einbetten; das Wort «Selbststudium» im `eyebrow` ist ein Link auf `index.html`
 - Committen und nach `main` pushen
 
 **Git-Commit-Format:**
