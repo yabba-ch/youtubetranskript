@@ -1,0 +1,187 @@
+<meta charset="utf-8">
+<title>Elementor MCP einrichten mit Claude, Codex oder Cursor</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EDEEE8;
+  --paper-raised:#F7F7F3;
+  --ink:#1B1D1F;
+  --ink-soft:#4C4E47;
+  --ink-faint:#5E6058;
+  --line:#D4D5CA;
+  --line-strong:#B9BBAE;
+  --accent:#B5652F;
+  --accent-deep:#7C401D;
+  --accent-soft:#F0DFC9;
+  --accent-2:#2F6E64;
+  --accent-2-soft:#DCEAE4;
+  --code-bg:#1B1D1F;
+  --code-fg:#EDEEE8;
+  --code-accent:#E3A15C;
+  --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(27,29,31,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+    --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+    --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+    --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+    --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+    --shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+  --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+  --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+  --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+  --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(0,0,0,0.4);
+}
+
+*{box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.65;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+@media (max-width:480px){ .wrap{padding:2rem 1rem 4rem;} }
+
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--accent-deep);display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+h1{font-family:'IBM Plex Serif',Georgia,serif;font-weight:600;font-size:34px;line-height:1.18;text-wrap:balance;margin:0.5rem 0 0.6rem;letter-spacing:-0.01em;}
+h2{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:19px;margin:0;text-wrap:balance;}
+h3{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 0.9rem;}
+
+.source-card{display:flex;align-items:center;gap:0.9rem;margin:0 0 1.75rem;}
+.source-thumb{flex:none;width:128px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:0.5px solid var(--line);display:block;}
+@media (max-width:480px){ .source-thumb{width:96px;} }
+.source-line{font-size:14.5px;color:var(--ink-soft);margin:0;}
+.source-line a{color:var(--accent-deep);text-decoration:none;border-bottom:0.5px solid currentColor;}
+.source-line a:hover{color:var(--accent);}
+
+.lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin:0 0 2rem;}
+
+.kontextbox{
+  background:var(--paper-raised);border:0.5px solid var(--line);border-left:2px solid var(--accent-2);
+  border-radius:0 10px 10px 0;padding:0.9rem 1.1rem;font-size:15px;color:var(--ink-soft);margin-bottom:2.75rem;
+}
+.kontextbox strong{color:var(--ink);font-weight:500;}
+
+.toc{border-top:0.5px solid var(--line-strong);border-bottom:0.5px solid var(--line-strong);padding:1rem 0;margin-bottom:3rem;}
+.toc-label{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.6rem;}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;}
+@media (max-width:520px){ .toc-grid{grid-template-columns:1fr;} }
+.toc-grid a{display:flex;align-items:baseline;gap:8px;font-size:14.5px;color:var(--ink-soft);text-decoration:none;padding:4px 0;}
+.toc-grid a:hover{color:var(--accent-deep);}
+.toc-grid .n{font-family:'IBM Plex Mono',monospace;color:var(--accent-deep);font-size:12.5px;width:1.4em;flex:none;}
+
+.cluster{margin-bottom:2.75rem;}
+.cluster-head{display:flex;align-items:baseline;gap:10px;margin-bottom:1.1rem;padding-bottom:0.6rem;border-bottom:0.5px solid var(--line-strong);}
+.cluster-head h2{flex:1;}
+.cluster-range{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);}
+
+.trick{display:grid;grid-template-columns:36px 1fr;gap:0.85rem;padding:1rem 0;border-top:0.5px solid var(--line);scroll-margin-top:1rem;}
+.trick:first-child{border-top:none;}
+.trick-num{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--accent-deep);background:var(--accent-soft);
+  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;
+}
+@media (max-width:480px){
+  .trick{grid-template-columns:30px 1fr;gap:0.65rem;}
+  .trick-num{width:26px;height:26px;font-size:11.5px;border-radius:7px;}
+}
+.trick-title-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 0.35rem;}
+.trick-title{font-size:16px;font-weight:500;margin:0;color:var(--ink);}
+.trick-time{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);text-decoration:none;white-space:nowrap;flex:none;}
+.trick-time:hover{color:var(--accent-deep);}
+.trick p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-soft);max-width:64ch;}
+.trick p + p{margin-top:0.5rem;}
+
+.inline-code{
+  font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);
+  padding:1px 6px;border-radius:4px;font-size:13.5px;
+}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--line-strong);font-size:13.5px;color:var(--ink-faint);}
+footer a{color:var(--accent-deep);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Selbststudium-Zusammenfassung des YouTube-Videos „How to set up the Elementor MCP with Claude, Codex, or Cursor" von Elementor: Schritt-für-Schritt-Einrichtung des Elementor MCP, um Claude, Codex und Cursor mit einer WordPress-/Elementor-Website zu verbinden und echte, bearbeitbare Elementor-Strukturen zu erzeugen. Aus dem Englischen übersetzt.</h2>
+
+  <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;border-bottom:0.5px solid currentColor;">Selbststudium</a> &middot; Video-Transkript</p>
+  <h1>Elementor MCP einrichten mit Claude, Codex oder Cursor</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/Cx1LAlyk-MQ" target="_blank" rel="noopener">
+      <img class="source-thumb" src="data:image/jpeg;base64,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" alt="Vorschaubild des Videos „How to set up the Elementor MCP with Claude, Codex, or Cursor" von Elementor">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/Cx1LAlyk-MQ" target="_blank" rel="noopener">„How to set up the Elementor MCP with Claude, Codex, or Cursor"</a>
+      &middot; Elementor &middot; 5 Min &middot; aus dem Englischen übersetzt
+    </p>
+  </div>
+  <p class="lede">
+    Das offizielle Elementor MCP verbindet KI-Tools wie Claude, Codex und Cursor mit einer Elementor-Website. Die KI erzeugt dabei echte, nativ bearbeitbare Elementor-Strukturen &ndash; kein gesperrter Inhalt, kein Code, kein Einmal-Design. Roy von Elementor zeigt die Einrichtung Schritt für Schritt.
+  </p>
+
+  <div class="kontextbox">
+    <strong>Einordnung:</strong> Das Plugin exponiert einen MCP-Server; die Authentifizierung läuft über pro Client getrennte <span class="inline-code">Application Passwords</span>, die einzeln widerrufbar sind. Über die WordPress Abilities API werden auch andere Plugins steuerbar. Entscheidend: Statt KI-generierter Wegwerf-Artefakte entstehen native, im Zielsystem weiter pflegbare Elementor-Elemente.
+  </div>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Inhalt</p>
+    <div class="toc-grid">
+      <a href="#t1"><span class="n">01</span>Elementor &amp; Erweiterungen installieren</a>
+      <a href="#t2"><span class="n">02</span>MCP-Verbindung herstellen</a>
+      <a href="#t3"><span class="n">03</span>Ergebnis testen</a>
+      <a href="#t4"><span class="n">04</span>Zugänge verwalten</a>
+    </div>
+  </nav>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Einrichtung Schritt für Schritt</h2><span class="cluster-range">01&ndash;04</span></div>
+    <div class="trick" id="t1">
+      <span class="trick-num">01</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Elementor &amp; Erweiterungen installieren</p><a class="trick-time" href="https://youtu.be/Cx1LAlyk-MQ?t=34" target="_blank" rel="noopener">ab 0:34</a></div>
+        <p>Elementor im WordPress-Plugin-Verzeichnis unter «Beliebt» oder per Suche installieren und aktivieren, dann kurz das Onboarding durchlaufen. Das MCP mit den Elementor-Kernfunktionen ist bereits kostenlos nutzbar.</p>
+        <p>Für den vollen Funktionsumfang zusätzlich <strong>Elementor Pro</strong> (liefert dem MCP Pop-ups, Formulare, Komponenten, Theme-Teile, dynamische Inhalte u. a.) und <strong>Angie</strong> (eigene Widgets, Anpassen des WordPress-Admins, Massenbearbeitungen an Produkten/Beiträgen, Steuerung anderer Plugins über die WordPress Abilities API).</p>
+      </div>
+    </div>
+    <div class="trick" id="t2">
+      <span class="trick-num">02</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">MCP-Verbindung herstellen</p><a class="trick-time" href="https://youtu.be/Cx1LAlyk-MQ?t=60" target="_blank" rel="noopener">ab 1:00</a></div>
+        <p>Auf der neuen MCP-Verbindungsseite in WordPress «Elementor MCP» anklicken, die Connector-Seite aktivieren und die Zielanwendung wählen: Claude Code, Claude Desktop, Codex, Cursor oder andere.</p>
+        <p>Pro Tool der gleiche Ablauf: bestätigen, dass im Hintergrund ein Application Password generiert wird &rarr; Prompt generieren (wird automatisch kopiert) &rarr; in das KI-Tool einfügen und absenden. Wichtig: die KI-App danach <strong>neu starten</strong>, bevor der nächste Prompt kommt, damit die Verbindung vollständig steht.</p>
+      </div>
+    </div>
+    <div class="trick" id="t3">
+      <span class="trick-num">03</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Ergebnis testen</p><a class="trick-time" href="https://youtu.be/Cx1LAlyk-MQ?t=151" target="_blank" rel="noopener">ab 2:31</a></div>
+        <p>Zur Demonstration legt jedes Tool eine neue Seite «Built with …» mit einem beliebigen Hero-Bereich an. Zurück in WordPress erscheinen drei Seiten: built with Claude, built with Codex, built with Cursor.</p>
+        <p>Im Elementor-Editor zeigt sich: echte, voll bearbeitbare Elementor-Elemente, wie selbst gebaut. Weiterarbeiten geht per Prompt (neue Sektionen/Seiten/Änderungen) oder manuell im Editor. Cursor ergänzte eigenständig eine kleine Animation, ohne dass danach gefragt wurde.</p>
+      </div>
+    </div>
+    <div class="trick" id="t4">
+      <span class="trick-num">04</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Zugänge verwalten</p><a class="trick-time" href="https://youtu.be/Cx1LAlyk-MQ?t=238" target="_blank" rel="noopener">ab 3:58</a></div>
+        <p>Die generierten Application Passwords werden in den WordPress-Benutzereinstellungen verwaltet &ndash; eines pro KI-Tool. Sie lassen sich jederzeit widerrufen oder neu generieren.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Zusammengefasst und aus dem Englischen übersetzt für das Selbststudium &middot;
+    <a href="https://youtu.be/Cx1LAlyk-MQ" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>
