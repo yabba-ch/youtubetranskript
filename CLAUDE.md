@@ -4,6 +4,8 @@ Dieses Repo enthält zwei Dinge: die `/watch`-Skill-Implementierung (`.claude/sk
 
 ## Ablaufverfahren pro Video
 
+> **Schritt 0 – Repo synchronisieren (zuerst!):** Vor dem Bauen immer `git fetch` und `git merge --ff-only origin/main`. Nie auf einem veralteten lokalen Stand bauen oder pushen – sonst kollidiert es mit Commits aus Cloud-/Worktree-Sessions. Beim Committen nur die **zwei Video-Dateien** stagen (neue HTML-Seite + `index.html`), nie Fremd-Dateien aus dem Arbeitsverzeichnis.
+
 Pro transkribiertem Video entstehen **zwei Ausgaben**:
 
 ### 1. Vault-Notiz (Markdown)
@@ -25,15 +27,15 @@ status: aktiv
 ### 2. HTML-Seite (dieses Repo)
 - Neue HTML-Datei in `YouTube-VideoTranskripte/`
 - **Dateiname:** Kebab-Case, beschreibend, z. B. `zwanzig-claude-code-tricks.html`
-- Eintrag in `YouTube-VideoTranskripte/index.html` hinzufügen: neue `entry-card` in der passenden Kategorie (oder neue Kategorie), **mit Vorschaubild** (YouTube `hqdefault.jpg` als Base64-Data-URI, gleiches Format wie die anderen Karten) und `data-date="YYYY-MM-DDTHH:MM"` (Erstellungszeitpunkt) auf dem `<a class="entry-card">`; Meta-Zeile: Kanal · Dauer · Datum (TT.MM.JJJJ). Zähler, Kategorien, Minuten, Sortierung (neueste zuerst), Suche und «Nur die letzten 3» berechnet das Skript in der Seite selbst.
+- Eintrag in `YouTube-VideoTranskripte/index.html` hinzufügen: neue `entry-card` in der passenden Kategorie (oder neue Kategorie), **mit Vorschaubild** (YouTube `hqdefault.jpg`, auf **480×360 JPEG** gebracht und als Base64-Data-URI eingebettet, gleiches Format wie die anderen Karten) und `data-date="YYYY-MM-DDTHH:MM"` (= **Ablagedatum**: Tag der Transkription, *nicht* das Video-Datum) auf dem `<a class="entry-card">`; Meta-Zeile: Kanal · Dauer · Datum (TT.MM.JJJJ). Zähler, Kategorien, Minuten, Sortierung (neueste zuerst), Suche und «Nur die letzten 3» berechnet das Skript in der Seite selbst.
 - Auf der Detailseite oben ebenfalls das Vorschaubild (`source-thumb`) einbetten; das Wort «Selbststudium» im `eyebrow` ist ein Link auf `index.html`
 - Committen und nach `main` pushen
 
-**Git-Commit-Format:**
+**Git-Commit-Format** (Autor: **Pascal Junker** via `--author="Pascal Junker <pascal.junker@gmail.com>"`, Co-Author = aktuelles Claude-Modell):
 ```
 Add transcript: <Videotitel>
 
-Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
 ```
 
 **Am Ende jeder Transkription den Live-Link anzeigen:**
@@ -68,3 +70,12 @@ Jede HTML-Seite folgt dem Stil der bestehenden Dateien in `YouTube-VideoTranskri
 - Metadaten im `<head>`: Titel, Kanal, Datum, Quellenlink
 - Inhaltsverzeichnis falls sinnvoll
 - Responsives Layout (≤480px)
+
+## Fallstricke (gelernt)
+
+- **Repo-Sync zuerst** (Schritt 0). Grösster Zeitfresser war ein lokaler Stand hinter `origin/main`.
+- **Nur die 2 Video-Dateien committen.** Fremde Projekte, Archive (`.tar.gz`), `.docx` usw. gehören nicht ins Repo → per `.gitignore` draussen halten, nie stagen.
+- **Windows:** `/watch` mit `PYTHONUTF8=1` starten, sonst stürzt die Ausgabe an der Konsolen-Kodierung (cp1252) ab.
+- **Datum überall = Ablagedatum** (Tag der Transkription): Vault-Frontmatter `datum`, Vault-Index-Eintrag und Feldbuch-`data-date` nutzen dasselbe Datum.
+- **Thumbnail:** `hqdefault.jpg` → 480×360 JPEG (q≈82), als Base64 einbetten (Detailseite als `source-thumb`, Karte als `entry-thumb`).
+- **Detailseite** immer nach dem Muster einer bestehenden Seite bauen (gleicher `<style>`-Kopf, «Selbststudium» verlinkt `index.html`, Schritte mit `?t=`-Deeplinks).

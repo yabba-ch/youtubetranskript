@@ -4,3 +4,11 @@
 cookies.txt
 __pycache__/
 *.pyc
+
+# Nicht-Transkript-Dateien / fremde Projekte (dieses Repo = nur Transkripte + /watch-Skill)
+.claude/settings.local.json
+ScreenshotTool/
+screenshot-ocr-extension/
+*.tar.gz
+*.docx
+/wissens-wettlauf.html
