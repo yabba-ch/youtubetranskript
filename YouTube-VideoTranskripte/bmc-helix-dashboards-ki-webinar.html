@@ -1,0 +1,254 @@
+<meta charset="utf-8">
+<title>BMC Helix Dashboards mit KI bauen – Raiders of the lost Assets</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --paper:#EDEEE8;
+  --paper-raised:#F7F7F3;
+  --ink:#1B1D1F;
+  --ink-soft:#4C4E47;
+  --ink-faint:#5E6058;
+  --line:#D4D5CA;
+  --line-strong:#B9BBAE;
+  --accent:#B5652F;
+  --accent-deep:#7C401D;
+  --accent-soft:#F0DFC9;
+  --accent-2:#2F6E64;
+  --accent-2-soft:#DCEAE4;
+  --code-bg:#1B1D1F;
+  --code-fg:#EDEEE8;
+  --code-accent:#E3A15C;
+  --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(27,29,31,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+    --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+    --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+    --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+    --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+    --shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#17181A; --paper-raised:#202224; --ink:#EDEEE8; --ink-soft:#C2C4BC;
+  --ink-faint:#9A9C93; --line:#34362F; --line-strong:#464840;
+  --accent:#E08A46; --accent-deep:#F2B37E; --accent-soft:#332318;
+  --accent-2:#5FB3A6; --accent-2-soft:#17302B;
+  --code-bg:#0F1011; --code-fg:#EDEEE8; --code-accent:#E3A15C; --code-muted:#A4A69B;
+  --shadow:0 1px 2px rgba(0,0,0,0.4);
+}
+
+*{box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',system-ui,sans-serif;line-height:1.65;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.wrap{max-width:760px;margin:0 auto;padding:2.5rem 1.25rem 5rem;}
+@media (max-width:480px){ .wrap{padding:2rem 1rem 4rem;} }
+
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--accent-deep);display:flex;align-items:center;gap:8px;
+}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;}
+
+h1{font-family:'IBM Plex Serif',Georgia,serif;font-weight:600;font-size:34px;line-height:1.18;text-wrap:balance;margin:0.5rem 0 0.6rem;letter-spacing:-0.01em;}
+h2{font-family:'IBM Plex Serif',Georgia,serif;font-weight:500;font-size:19px;margin:0;text-wrap:balance;}
+h3{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:0.07em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 0.9rem;}
+
+.source-card{display:flex;align-items:center;gap:0.9rem;margin:0 0 1.75rem;}
+.source-thumb{flex:none;width:128px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;border:0.5px solid var(--line);display:block;}
+@media (max-width:480px){ .source-thumb{width:96px;} }
+.source-line{font-size:14.5px;color:var(--ink-soft);margin:0;}
+.source-line a{color:var(--accent-deep);text-decoration:none;border-bottom:0.5px solid currentColor;}
+.source-line a:hover{color:var(--accent);}
+
+.lede{font-size:17px;color:var(--ink-soft);max-width:62ch;margin:0 0 2rem;}
+
+.kontextbox{
+  background:var(--paper-raised);border:0.5px solid var(--line);border-left:2px solid var(--accent-2);
+  border-radius:0 10px 10px 0;padding:0.9rem 1.1rem;font-size:15px;color:var(--ink-soft);margin-bottom:2.75rem;
+}
+.kontextbox strong{color:var(--ink);font-weight:500;}
+
+.toc{border-top:0.5px solid var(--line-strong);border-bottom:0.5px solid var(--line-strong);padding:1rem 0;margin-bottom:3rem;}
+.toc-label{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.6rem;}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;}
+@media (max-width:520px){ .toc-grid{grid-template-columns:1fr;} }
+.toc-grid a{display:flex;align-items:baseline;gap:8px;font-size:14.5px;color:var(--ink-soft);text-decoration:none;padding:4px 0;}
+.toc-grid a:hover{color:var(--accent-deep);}
+.toc-grid .n{font-family:'IBM Plex Mono',monospace;color:var(--accent-deep);font-size:12.5px;width:1.4em;flex:none;}
+
+.cluster{margin-bottom:2.75rem;}
+.cluster-head{display:flex;align-items:baseline;gap:10px;margin-bottom:1.1rem;padding-bottom:0.6rem;border-bottom:0.5px solid var(--line-strong);}
+.cluster-head h2{flex:1;}
+.cluster-range{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);}
+
+.trick{display:grid;grid-template-columns:36px 1fr;gap:0.85rem;padding:1rem 0;border-top:0.5px solid var(--line);scroll-margin-top:1rem;}
+.trick:first-child{border-top:none;}
+.trick-num{
+  font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--accent-deep);background:var(--accent-soft);
+  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;
+}
+@media (max-width:480px){
+  .trick{grid-template-columns:30px 1fr;gap:0.65rem;}
+  .trick-num{width:26px;height:26px;font-size:11.5px;border-radius:7px;}
+}
+.trick-title-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 0.35rem;}
+.trick-title{font-size:16px;font-weight:500;margin:0;color:var(--ink);}
+.trick-time{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-faint);text-decoration:none;white-space:nowrap;flex:none;}
+.trick-time:hover{color:var(--accent-deep);}
+.trick p{margin:0;font-size:15.5px;line-height:1.6;color:var(--ink-soft);max-width:64ch;}
+.trick p + p{margin-top:0.5rem;}
+
+.inline-code{
+  font-family:'IBM Plex Mono',monospace;background:var(--code-bg);color:var(--code-accent);
+  padding:1px 6px;border-radius:4px;font-size:13.5px;
+}
+
+footer{margin-top:3rem;padding-top:1.5rem;border-top:0.5px solid var(--line-strong);font-size:13.5px;color:var(--ink-faint);}
+footer a{color:var(--accent-deep);text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+</style>
+
+<div class="wrap">
+  <h2 class="sr-only">Selbststudium-Zusammenfassung des BMC-Helix-Webinars „Raiders of the lost Assets – The Last Dashboard" mit Matt und Rod: An einer echten Kundenanfrage (Dashboard über Benutzer, Rollen und Berechtigungen im Helix-Portal) zeigen sie, wie sie Helix-Dashboards mit KI (Copilot) bauen – Dashboard Developer Workbench, Felder/Indizes/Coverage, Asset-People-Joins, Variablen-Performance und distinct vs. group by. Aus dem Englischen übersetzt.</h2>
+
+  <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;border-bottom:0.5px solid currentColor;">Selbststudium</a> &middot; Video-Transkript</p>
+  <h1>BMC Helix Dashboards mit KI bauen – Raiders of the lost Assets</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/aV8ts2x6YAE" target="_blank" rel="noopener">
+      <img class="source-thumb" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAUEBAYFBQUGBgYHCQ4JCQgICRINDQoOFRIWFhUSFBQXGiEcFxgfGRQUHScdHyIjJSUlFhwpLCgkKyEkJST/2wBDAQYGBgkICREJCREkGBQYJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCT/wAARCAFoAeADASIAAhEBAxEB/8QAHAABAAIDAQEBAAAAAAAAAAAAAAUHBAYIAgMB/8QAVhAAAQMCAgcFBAYFBwcJCQAAAgADBAUSBiIBBxMUMkJSERVicpEII4KSISQzorLCFjRDU/AXMVFhc4PiJUFEVGR10hgnNWNxdIGjsTY3VZOUtMHR8v/EABoBAQACAwEAAAAAAAAAAAAAAAACBAEDBQb/xAAuEQEBAAEDAwMEAQMEAwAAAAAAAgMEEhMBFCIRMlEFQlJighUhIzFDcpIzYZH/2gAMAwEAAhEDEQA/AOVEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQfvanapDuh3qb9U7od6m/VbuKmvln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5R/anapDuh3qb9U7od6m/VOKjln5SqIi6bmCIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAilcPYbnYnlOx6fsfcheZunYC+FWo86iSt3qEY47vLfwH5FDmjds+5a7XLxcu3xYKIimqiIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiDc9Wrok/VaZtQZkTohhHM+v8Ag1kacT1Clae48Z0s50Tre4/OB860ynwJlSmNMQ2TekHwACs058fD1EGDjOdGqkjIYRBDavB8f51ydZMxk9fdu/7PXfScuTLg2da27fu+3/jTVq9hCIzTDxBRJ2+UznA+NnOt01C6vsN47g4ufxDBOY5S4zDsa191rZkWiRdwHm4BULjneKxh8KjSKiydBasA47IWWKwPZJk6I8bHb9gls40M7C4S7N40rbp8t3g3UpfVcGPFqtuKft/j/H/05/OHLjRY8iVEkstSAvadeaMAe8nWvQU6c9stlBkntjsasaP3x+DrXT2qPWDUNfMHEWFcaU6nvRSjA7odjNWWXf8AaRZhyEBeFfKo6wKtqy9nPBlWozcB2Y8TMS98bgEbHSvH5PvLfz17XI4ZczhTJ7s0oLUCYc0eKOEc9qHwcaxj9yZgeQwyHfyLr3WvrVqOCSwTUaTT6fofxFoApput3GTIaWvdXf35fSpOXgWh1P2hdFZlRI5uxKGzL2WlvjkbYwB7xEIB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/RO5g7W0siie93ulv0Tvd7pb9E7mDtbSyKJ73e6W/RO93ulv0TuYO1tLIonvd7pb9E73e6W/RO5g7W0siie93ulv0Tvd7pb9E7mDtbSyKJ73e6W/RO93ulv0TuYO1tLIonvd7pb9E73e6W/RO5g7W0siie93ulv0Tvd7pb9E7mDtbSyKJ73e6W/RO93ulv0TuYO1tLIonvd7pb9E73e6W/RO5g7W0siie93ulv0Tvd7pb9E7mDtbSyKJ73e6W/RO93ulv0TuYO1tLIonvd7pb9E73e6W/RO5g7W0siie93ulv0Tvd7pb9E7mDtbSyKJ73e6W/RO93ulv0TuYO1tLIonvd7pb9E73e6W/RO5g7W0siie93ulv0Tvd7pb9E7mDtbSyKJ73e6W/RO93ulv0TuYO1tLIonvd7pb9E73e6W/RO5g7W0siie93ulv0Tvd7pb9E7mDtbSyKJ73e6W/RO93ulv0TuYO1tLIonvd7pb9E73e6W/RO5g7W0siie93ulv0Tvd7pb9E7mDtbSyKJ73e6W/RO93ulv0TuYO1tLL0DxsneB2KH73f6G/RO93+hv0TuYS7a1k0zWnWYcfd5DMaW147wP51KnrmkHffRgO//AGv/AAKou9nulv0TvZ7pb9FWudLX2t8VnlstWrcisP7WQAeRR/LYonvZ/ob9E72e6W/Rboy4o9rXcZb9yWRRPe73S36J3u90t+in3MNXbWlkUT3u90t+id7vdLfoncwdraPREXOdAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREH//2Q==" alt="Vorschaubild des BMC-Helix-Webinars „Raiders of the lost Assets – The Last Dashboard"">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/aV8ts2x6YAE" target="_blank" rel="noopener">„Webinar: Raiders of the lost Assets – The Last Dashboard"</a>
+      &middot; BMC Helix Events &middot; 65 Min &middot; aus dem Englischen übersetzt
+    </p>
+  </div>
+  <p class="lede">
+    Live-Webinar der BMC-Helix-Reihe. Matt (PM Security &amp; Discovery) und Rod (ITSM- und Dashboard-Spezialist) nehmen eine echte Kundenanfrage und zeigen, wie sie daraus mit KI (Microsoft Copilot, nicht Helix GPT) ein Helix-Dashboard bauen. Die Anfrage: Benutzer, Rollen und Berechtigungen (Gruppen) im Helix-Portal sichtbar machen. Der Kern ist die Arbeitsweise – Mensch als «Lehrer mit rotem Stift», KI als Werkzeug fürs Repetitive.
+  </p>
+
+  <div class="kontextbox">
+    <strong>Einordnung:</strong> Direkt relevant für ITSM-/Helix-Arbeit und AR-SQL-Konventionen. Konkret werden die Verknüpfung <span class="inline-code">AST:Asset People</span> ↔ <span class="inline-code">AST:BaseElement</span>, die Beziehungstypen (<em>used by / managed by / approved by</em>), das Erweitern von Indizes sowie <span class="inline-code">distinct</span> vs. explizites <span class="inline-code">group by</span> gezeigt. Die Dashboard Developer Workbench (Felder, Indizes, Coverage-Heatmap, Vorschaudaten) ist dieselbe Idee wie ein Feldnamen-Report – nur live im Dashboard, und die Vorschaudaten dienen zugleich als KI-Input.
+  </div>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Inhalt</p>
+    <div class="toc-grid">
+      <a href="#t1"><span class="n">01</span>Die Kundenanfrage</a>
+      <a href="#t2"><span class="n">02</span>Dashboard Developer Workbench</a>
+      <a href="#t3"><span class="n">03</span>Felder finden &amp; Coverage-Heatmap</a>
+      <a href="#t4"><span class="n">04</span>Vorschaudaten als KI-Input</a>
+      <a href="#t5"><span class="n">05</span>Von der Anfrage zum Dashboard</a>
+      <a href="#t6"><span class="n">06</span>«Verschönern» mit KI</a>
+      <a href="#t7"><span class="n">07</span>ITOM → Helix &amp; Governance</a>
+      <a href="#t8"><span class="n">08</span>Dynamic Text &amp; Token sparen</a>
+      <a href="#t9"><span class="n">09</span>Q&amp;A: Copilot vs. Helix GPT</a>
+      <a href="#t10"><span class="n">10</span>Q&amp;A: Asset-People &amp; CMDB-Joins</a>
+      <a href="#t11"><span class="n">11</span>Q&amp;A: Variablen, Indizes, distinct</a>
+    </div>
+  </nav>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Ausgangslage &amp; Workbench</h2><span class="cluster-range">01&ndash;04</span></div>
+    <div class="trick" id="t1">
+      <span class="trick-num">01</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Die Kundenanfrage</p><a class="trick-time" href="https://youtu.be/aV8ts2x6YAE?t=89" target="_blank" rel="noopener">ab 1:29</a></div>
+        <p>Ein Kundenbüro fragt, wie man mit KI schneller und genauer Dashboards baut – konkret ein Dashboard rund um Benutzer und Gruppen im Helix-Portal: wer ist in welcher Gruppe, wer hat welche Rolle, filterbar nach Benutzer und Gruppe. Statt einer fertigen Anleitung zeigen Matt und Rod, wie sie eine solche Anfrage angehen.</p>
+      </div>
+    </div>
+    <div class="trick" id="t2">
+      <span class="trick-num">02</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Dashboard Developer Workbench</p><a class="trick-time" href="https://youtu.be/aV8ts2x6YAE?t=191" target="_blank" rel="noopener">ab 3:11</a></div>
+        <p>Rods Meta-Dashboard löst die alte Dauerfrage: welche Felder stecken in welchem Formular und wie schreibe ich die Abfrage? Man gibt einen Formularnamen ein (z. B. <span class="inline-code">BMC Core Base Element</span>) und bekommt Statistiken – im Demo-Formular 113 Felder, 17 Indizes, 0 Custom Fields – sowie eine Tabelle der Out-of-the-box-Indizes mit ihren Feldern. Kernregel: Abfragen möglichst auf indizierte Felder filtern.</p>
+      </div>
+    </div>
+    <div class="trick" id="t3">
+      <span class="trick-num">03</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Felder finden &amp; Coverage-Heatmap</p><a class="trick-time" href="https://youtu.be/aV8ts2x6YAE?t=375" target="_blank" rel="noopener">ab 6:15</a></div>
+        <p>Eine transponierte Ansicht der Vorschaudaten zeigt die Felder alphabetisch – so findet man ein Feld (z. B. «Assignee Group», «Assigned to») sofort und kopiert exakte Formular- und Feldnamen 1:1. Ein weiterer Abschnitt zeigt pro Feld den Füllgrad als Heatmap (grüner = mehr Daten): keine Abfragen auf faktisch leere Felder, und zwei ähnlich benannte Felder lassen sich unterscheiden.</p>
+      </div>
+    </div>
+    <div class="trick" id="t4">
+      <span class="trick-num">04</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Vorschaudaten als KI-Input</p><a class="trick-time" href="https://youtu.be/aV8ts2x6YAE?t=616" target="_blank" rel="noopener">ab 10:16</a></div>
+        <p>Der Daten-Dump eines Formulars ist ein guter Input für die KI: füttert man sie mit Vorschaudaten und einer Aufgabe, schreibt sie die Abfrage deutlich schneller und muss weniger raten – «eine Sozialisierung von Wissen», die zugleich Token spart, weil die KI die Felder nicht erraten muss.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Dashboard-Bau mit KI</h2><span class="cluster-range">05&ndash;08</span></div>
+    <div class="trick" id="t5">
+      <span class="trick-num">05</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Von der Anfrage zum Dashboard</p><a class="trick-time" href="https://youtu.be/aV8ts2x6YAE?t=739" target="_blank" rel="noopener">ab 12:19</a></div>
+        <p>Rods Standard-Workflow: dem Copilot das Problem schildern, bekannte Tabellen und Beispieldaten füttern → er empfiehlt Abfragen und Layouts. Er hat dem Copilot seinen Stil beigebracht.</p>
+        <p>Diese Anfrage lag ausserhalb seines ITSM-Schwerpunkts (Portal-Berechtigungen). Sein erster KI-Versuch hatte API-Aufrufe mit sperriger JSON-Syntax, die er selbst nicht debuggen konnte. Über den Query Inspector schob er Abfrage und Fehlermeldung in die KI – die riet oft falsch. Fazit: ein Grundwissen bleibt in dieser Phase nötig.</p>
+      </div>
+    </div>
+    <div class="trick" id="t6">
+      <span class="trick-num">06</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">«Verschönern» mit KI</p><a class="trick-time" href="https://youtu.be/aV8ts2x6YAE?t=1067" target="_blank" rel="noopener">ab 17:47</a></div>
+        <p>Matt gab das JSON an Copilot mit der Bitte «bau es in meinem Stil neu und prüf auf weitere APIs». Copilot las die Dokumentation, fand zusätzliche Endpunkte und reparierte die Verknüpfung der Spalten «Rollen» und «Gruppen».</p>
+        <p>Ergebnis: dynamische Dropdowns in einheitlicher Farbe, Umschalten zwischen Rollen- und Gruppenansicht, Benutzersuche, eine Zeile pro Gruppe pro Rolle. Rund 7 Minuten für die KI-Politur, insgesamt etwa 10 Minuten von der rohen Tabelle zum vorzeigbaren Dashboard.</p>
+      </div>
+    </div>
+    <div class="trick" id="t7">
+      <span class="trick-num">07</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">ITOM → Helix &amp; Governance</p><a class="trick-time" href="https://youtu.be/aV8ts2x6YAE?t=1267" target="_blank" rel="noopener">ab 21:07</a></div>
+        <p>Weil die Anfrage das Wort «ITOM» enthielt, stempelte die KI das Dashboard als ITOM. Zwei Wege zur Korrektur: die KI das JSON ändern lassen (kostet Token) oder eine manuelle Wort-für-Wort-Ersetzung (Vorsicht bei Gross-/Kleinschreibung – ITOM vs. komplett grossgeschrieben).</p>
+        <p>Kernbotschaft: Man muss kein tiefer Technik-Experte mehr sein, braucht aber technische Governance – definierte Styles und einen Hausstil –, um Nutzer zu befähigen, eine Anfrage selbst in ein Dashboard zu bringen, alles innerhalb der Helix-Plattform.</p>
+      </div>
+    </div>
+    <div class="trick" id="t8">
+      <span class="trick-num">08</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Dynamic Text &amp; Token sparen</p><a class="trick-time" href="https://youtu.be/aV8ts2x6YAE?t=1680" target="_blank" rel="noopener">ab 28:00</a></div>
+        <p>Dynamic Text kann tausende Zeilen HTML, JavaScript und CSS umfassen. Matts Rat: nicht manuell am JavaScript schrauben – «kann die KI dir kein JS schreiben, hast du die falsche KI». Farben, Texte und Labels im HTML anzupassen ist dagegen leicht.</p>
+        <p>Die KI sei im letzten Jahr massiv besser geworden («früher sturer als meine fünfjährige Tochter»). Grundsatz: «Token = Gehirnschmalz» – für Triviales lieber das JSON direkt editieren, statt Token zu verbrennen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Fragen &amp; Antworten</h2><span class="cluster-range">09&ndash;11</span></div>
+    <div class="trick" id="t9">
+      <span class="trick-num">09</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Copilot vs. Helix GPT / Insight Finder</p><a class="trick-time" href="https://youtu.be/aV8ts2x6YAE?t=2148" target="_blank" rel="noopener">ab 35:48</a></div>
+        <p>Auf die Frage, ob die native Helix-GPT-KI bzw. der Insight-Finder-Agent genutzt wird: nein. Matt und Rod arbeiten bewusst «old school» – Dashboard-JSON exportieren, in Copilot hochladen, als Helix-Dashboard erklären. Insight Finder macht spannende Dinge und ist eine mögliche Zukunftsrichtung (Export → mit KI verschönern → zurück); der Wunsch ist alles in einem Ökosystem. Funktioniert schon mit Copilot Basic.</p>
+      </div>
+    </div>
+    <div class="trick" id="t10">
+      <span class="trick-num">10</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Asset-People &amp; CMDB-Joins</p><a class="trick-time" href="https://youtu.be/aV8ts2x6YAE?t=2707" target="_blank" rel="noopener">ab 45:07</a></div>
+        <p>Die Tabelle <span class="inline-code">AST:Asset People</span> wird mit dem Basis-CI-Formular <span class="inline-code">AST:BaseElement</span> verknüpft (jedes CI = eine Zeile, jede Personenbeziehung = eine Zeile), über den Schlüssel gejoint.</p>
+        <p>In der <span class="inline-code">WHERE</span>-Klausel: <span class="inline-code">AP.Full Name</span> (Name der Gruppe/Person) und <span class="inline-code">AP.Person Role</span> als Beziehungstyp (<em>used by</em>, <em>managed by</em>, <em>approved by</em>). Eine optionale Variable «Portfolio» wählt Supportgruppen und expandiert per <span class="inline-code">(${...})</span>-Syntax. Die gezeigten Dashboards landen im öffentlichen GitHub-Repo.</p>
+      </div>
+    </div>
+    <div class="trick" id="t11">
+      <span class="trick-num">11</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Variablen, Indizes, distinct</p><a class="trick-time" href="https://youtu.be/aV8ts2x6YAE?t=2993" target="_blank" rel="noopener">ab 49:53</a></div>
+        <p>Versteckte Variablen als Teil der Abfrage (nicht erst nachträglich filtern) machen Dashboards dynamisch und bringen einen enormen Performance-Gewinn. Prinzip «Dashboards als Fenster»: nur das Interessengebiet laden, erst Zähler/Diagramme zeigen, dann per Klick die Datensätze. Die Basis-Element-Tabelle enthält jedes CI – die 17 OOTB-Indizes reichen selten, die meisten Kunden sollten Indizes erweitern.</p>
+        <p><span class="inline-code">distinct</span> kostet Leistung (Duplikate werden nach dem Query entfernt) und kann Daten verschleiern; Smart-Reporting-Konvertierungen setzen immer <span class="inline-code">select distinct</span> davor – besser bewusst prüfen und stattdessen explizit <span class="inline-code">group by</span> nutzen. Ausblick: neue CMDB-Datenqualitäts-Funktionen, nur benötigte Klassen/Felder pflegen statt 50'000 Zeilen zu exportieren. Helix als Ökosystem für ITSM und AIOps, Dashboards als Live-Fenster; Inhalte auf GitHub und künftig dem Helix-Marktplatz. Die Sessions sind explorativ, Feedback erwünscht.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Zusammengefasst und aus dem Englischen übersetzt für das Selbststudium &middot;
+    <a href="https://youtu.be/aV8ts2x6YAE" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>
