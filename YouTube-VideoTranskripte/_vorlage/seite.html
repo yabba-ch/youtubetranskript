@@ -1,0 +1,41 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<link rel="stylesheet" href="assets/feldbuch.css">
+
+<div class="wrap">
+  <h2 class="sr-only">{{SR_SUMMARY}}</h2>
+
+  <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;border-bottom:0.5px solid currentColor;">Selbststudium</a> &middot; Video-Transkript</p>
+  <h1>{{TITLE}}</h1>
+  <div class="source-card">
+    <a href="{{VIDEO_URL}}" target="_blank" rel="noopener">
+      <img class="source-thumb" src="assets/thumbs/{{SLUG}}.jpg" alt="Vorschaubild: {{TITLE}}">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="{{VIDEO_URL}}" target="_blank" rel="noopener">&bdquo;{{TITLE}}&ldquo;</a>
+      &middot; {{CHANNEL}} &middot; {{DURATION}} &middot; automatisch transkribiert
+    </p>
+  </div>
+  <p class="lede">
+    {{LEDE}}
+  </p>
+
+  {{KONTEXT_INTRO}}
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Inhalt</p>
+    <div class="toc-grid">
+{{TOC}}
+    </div>
+  </nav>
+
+{{CLUSTERS}}
+
+  {{KONTEXT_OUTRO}}
+
+  <footer>
+    Zusammengefasst aus dem Video-Transkript f&uuml;r das Selbststudium &middot;
+    <a href="{{VIDEO_URL}}" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>
