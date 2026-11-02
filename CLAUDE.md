@@ -4,7 +4,7 @@ Dieses Repo enthält zwei Dinge: die `/watch`-Skill-Implementierung (`.claude/sk
 
 ## Ablaufverfahren pro Video
 
-> **Schritt 0 – Repo synchronisieren (zuerst!):** Vor dem Bauen immer `git fetch` und `git merge --ff-only origin/main`. Nie auf einem veralteten lokalen Stand bauen oder pushen – sonst kollidiert es mit Commits aus Cloud-/Worktree-Sessions. Beim Committen nur die **zwei Video-Dateien** stagen (neue HTML-Seite + `index.html`), nie Fremd-Dateien aus dem Arbeitsverzeichnis.
+> **Schritt 0 – Repo synchronisieren (zuerst!):** Vor dem Bauen immer `git fetch` und `git merge --ff-only origin/main`. Nie auf einem veralteten lokalen Stand bauen oder pushen – sonst kollidiert es mit Commits aus Cloud-/Worktree-Sessions. Beim Committen nur die **zum Video gehörenden Dateien** stagen (`<slug>.html`, `index.html`, `assets/thumbs/<slug>.jpg`, ggf. `assets/img/...`), nie Fremd-Dateien aus dem Arbeitsverzeichnis.
 
 Pro transkribiertem Video entstehen **zwei Ausgaben**:
 
@@ -24,12 +24,23 @@ status: aktiv
 ---
 ```
 
-### 2. HTML-Seite (dieses Repo)
-- Neue HTML-Datei in `YouTube-VideoTranskripte/`
-- **Dateiname:** Kebab-Case, beschreibend, z. B. `zwanzig-claude-code-tricks.html`
-- Eintrag in `YouTube-VideoTranskripte/index.html` hinzufügen: neue `entry-card` in der passenden Kategorie (oder neue Kategorie), **mit Vorschaubild** (YouTube `hqdefault.jpg`, auf **480×360 JPEG** gebracht und als Base64-Data-URI eingebettet, gleiches Format wie die anderen Karten) und `data-date="YYYY-MM-DDTHH:MM"` (= **Ablagedatum**: Tag der Transkription, *nicht* das Video-Datum) auf dem `<a class="entry-card">`; Meta-Zeile: Kanal · Dauer · Datum (TT.MM.JJJJ). Zähler, Kategorien, Minuten, Sortierung (neueste zuerst), Suche und «Nur die letzten 3» berechnet das Skript in der Seite selbst.
-- Auf der Detailseite oben ebenfalls das Vorschaubild (`source-thumb`) einbetten; das Wort «Selbststudium» im `eyebrow` ist ein Link auf `index.html`
-- Committen und nach `main` pushen
+### 2. HTML-Seite (dieses Repo) – via Vorlage + Generator
+Seit dem Umbau (2026-11): **keine Base64-Bilder und kein Inline-`<style>` mehr.** Bilder liegen als Dateien unter `assets/`, CSS zentral in `assets/feldbuch.css` (Detailseiten) bzw. `assets/index.css` (Startseite). Vorlage und Generator liegen in `YouTube-VideoTranskripte/_vorlage/` (Ordner beginnt mit `_` → von GitHub Pages nicht publiziert).
+
+Ablauf:
+1. **Slug** wählen (Kebab-Case, beschreibend, z. B. `zwanzig-claude-code-tricks`).
+2. Claude schreibt eine kleine **JSON-Inhaltsdatei** `<slug>.json` (Schema steht im Kopf von `_vorlage/neue-seite.py`: `slug, video_id, title, channel, duration_min, date` = Ablagedatum, `category, sr_summary, lede, kontext_intro?, clusters[]→tricks{title,time,body}, kontext_outro?`). Das ist die eigentliche Zusammenfassung; `body`/`lede`/`text` dürfen Inline-HTML enthalten (`<strong>`, `<span class="inline-code">`), `&` als `&amp;` schreiben.
+3. Aus `YouTube-VideoTranskripte/` aufrufen:
+   ```bash
+   python _vorlage/neue-seite.py <slug>.json
+   ```
+   Der Generator: lädt+skaliert das Thumbnail (`hqdefault.jpg` → 480×360 JPEG nach `assets/thumbs/<slug>.jpg`), füllt `_vorlage/seite.html` (externes CSS, `source-thumb`, TOC + Cluster mit `?t=`-Deeplinks, «Selbststudium» verlinkt `index.html`) und fügt die `entry-card` in `index.html` ein (passende Kategorie, `data-date` = **Ablagedatum** = Tag der Transkription, Zähler automatisch, idempotent).
+4. Committen und nach `main` pushen.
+
+Hinweise:
+- **Kategorie muss existieren:** Fehlt die Zielkategorie in `index.html`, bricht der Generator ab → Kategorie-Sektion einmalig von Hand anlegen, dann erneut laufen lassen.
+- Zähler, Minuten, Sortierung (neueste zuerst), Suche und «Nur die letzten 3» berechnet das Seiten-Skript in `index.html` selbst.
+- **Altseiten mit Inline-CSS:** Ein paar ältere Seiten mit eigenen Layout-Systemen behalten ihren Inline-`<style>` (siehe Migration). Für neue Transkripte immer den Generator nutzen.
 
 **Git-Commit-Format** (Autor: **Pascal Junker** via `--author="Pascal Junker <pascal.junker@gmail.com>"`, Co-Author = aktuelles Claude-Modell):
 ```
@@ -65,17 +76,17 @@ Nützliche Flags:
 
 ## HTML-Seitenstruktur
 
-Jede HTML-Seite folgt dem Stil der bestehenden Dateien in `YouTube-VideoTranskripte/`:
-- Semantisches HTML5 mit eingebettetem CSS (Light/Dark-Theme via CSS Custom Properties)
-- Metadaten im `<head>`: Titel, Kanal, Datum, Quellenlink
-- Inhaltsverzeichnis falls sinnvoll
+Neue Detailseiten entstehen aus `_vorlage/seite.html` (via Generator), nicht von Hand:
+- Semantisches HTML5, **externes CSS** (`assets/feldbuch.css`, Light/Dark-Theme via CSS Custom Properties), Viewport-Meta
+- `<title>`, `source-card` mit Quellenlink + `source-thumb`, `lede`, Kontextboxen, `toc`, Cluster mit nummerierten `trick`-Blöcken, `footer`
+- Zusatzkomponenten in `feldbuch.css`: `.trick-shot` (Inhaltsbild), `.promptquote`, `.tbl`
 - Responsives Layout (≤480px)
 
 ## Fallstricke (gelernt)
 
 - **Repo-Sync zuerst** (Schritt 0). Grösster Zeitfresser war ein lokaler Stand hinter `origin/main`.
-- **Nur die 2 Video-Dateien committen.** Fremde Projekte, Archive (`.tar.gz`), `.docx` usw. gehören nicht ins Repo → per `.gitignore` draussen halten, nie stagen.
+- **Nur die zum Video gehörenden Dateien committen** (`<slug>.html`, `index.html`, `assets/thumbs/<slug>.jpg`, ggf. `assets/img/...`). Fremde Projekte, Archive (`.tar.gz`), `.docx` usw. gehören nicht ins Repo → per `.gitignore` draussen halten, nie stagen.
 - **Windows:** `/watch` mit `PYTHONUTF8=1` starten, sonst stürzt die Ausgabe an der Konsolen-Kodierung (cp1252) ab.
 - **Datum überall = Ablagedatum** (Tag der Transkription): Vault-Frontmatter `datum`, Vault-Index-Eintrag und Feldbuch-`data-date` nutzen dasselbe Datum.
-- **Thumbnail:** `hqdefault.jpg` → 480×360 JPEG (q≈82), als Base64 einbetten (Detailseite als `source-thumb`, Karte als `entry-thumb`).
-- **Detailseite** immer nach dem Muster einer bestehenden Seite bauen (gleicher `<style>`-Kopf, «Selbststudium» verlinkt `index.html`, Schritte mit `?t=`-Deeplinks).
+- **Thumbnail & Seite baut der Generator** (`_vorlage/neue-seite.py`): Thumb `hqdefault.jpg` → 480×360 JPEG als **Datei** in `assets/thumbs/`, Seite aus `_vorlage/seite.html`. **Nicht mehr** von Hand nach dem Muster einer Bestandsseite bauen und **kein Base64** mehr einbetten.
+- **CSS zentral:** Design-Änderungen an Detailseiten nur in `assets/feldbuch.css` (gilt für alle Standard-Seiten), Startseite in `assets/index.css`.
