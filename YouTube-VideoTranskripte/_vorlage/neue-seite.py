@@ -80,7 +80,8 @@ def beschreibung(b):
         f'      <li><a href="{l["url"]}" target="_blank" rel="noopener">{l["title"]}</a></li>'
         for l in links if l.get("url") and l.get("title")
     )
-    links_html = (f'\n    <ul class="desc-links">\n{link_items}\n    </ul>' if link_items else "")
+    links_html = (f'\n    <p class="desc-links-title">Links aus Beschreibung</p>\n'
+                  f'    <ul class="desc-links">\n{link_items}\n    </ul>' if link_items else "")
     summary_html = f'\n    <p>{summary}</p>' if summary else ""
     return (f'<section class="beschreibung">\n'
             f'    <h2>Aus der Videobeschreibung</h2>{summary_html}{links_html}\n  </section>')

@@ -8,7 +8,7 @@ Dieses Repo enthält zwei Dinge: die `/watch`-Skill-Implementierung (`.claude/sk
 
 Pro transkribiertem Video entstehen **zwei Ausgaben**:
 
-> **Videobeschreibung auswerten:** `/watch` gibt die YouTube-Beschreibung seit 2026-11 als Abschnitt `## Description` im Report aus. Daraus in **beide Ausgaben** – direkt **nach dem Roter Faden** (`kontext_intro`) – ein Block `Aus der Videobeschreibung`: (1) eine Zusammenfassung der Beschreibung (**max. 8 Sätze**) und (2) eine Aufzählung der **relevanten** Links (`Titel – URL`: genannte Projekte, Tools, Quellen). **Eigenwerbung** (eigene Community/Masterclass), **Social-Media-Profile** und **Affiliate-/Sponsor-Links** rausfiltern.
+> **Videobeschreibung auswerten:** `/watch` gibt die YouTube-Beschreibung seit 2026-11 als Abschnitt `## Description` im Report aus. Daraus in **beide Ausgaben** – direkt **nach dem Roter Faden** (`kontext_intro`) – ein Block `Aus der Videobeschreibung`: (1) eine Zusammenfassung der Beschreibung (**max. 8 Sätze**) und (2) unter dem Titel «Links aus Beschreibung» eine einfache Aufzählung der **relevanten** Links (blaue Links, keine Tabelle: genannte Projekte, Tools, Quellen). **Eigenwerbung** (eigene Community/Masterclass), **Social-Media-Profile** und **Affiliate-/Sponsor-Links** rausfiltern.
 
 ### 1. Vault-Notiz (Markdown)
 Wird im Obsidian-Vault unter `03 Bereiche/YouTube Transkripte/` abgelegt. Nach der `## Zusammenfassung` folgt der Abschnitt `## Aus der Videobeschreibung` (Zusammenfassung + Links-Liste), dann `## Einordnung`.
