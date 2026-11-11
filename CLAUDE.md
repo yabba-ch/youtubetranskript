@@ -8,8 +8,10 @@ Dieses Repo enthält zwei Dinge: die `/watch`-Skill-Implementierung (`.claude/sk
 
 Pro transkribiertem Video entstehen **zwei Ausgaben**:
 
+> **Videobeschreibung auswerten:** `/watch` gibt die YouTube-Beschreibung seit 2026-11 als Abschnitt `## Description` im Report aus. Daraus in **beide Ausgaben** – direkt **nach dem Roter Faden** (`kontext_intro`) – ein Block `Aus der Videobeschreibung`: (1) eine Zusammenfassung der Beschreibung (**max. 8 Sätze**) und (2) eine Aufzählung der **relevanten** Links (`Titel – URL`: genannte Projekte, Tools, Quellen). **Eigenwerbung** (eigene Community/Masterclass), **Social-Media-Profile** und **Affiliate-/Sponsor-Links** rausfiltern.
+
 ### 1. Vault-Notiz (Markdown)
-Wird im Obsidian-Vault unter `03 Bereiche/YouTube Transkripte/` abgelegt.
+Wird im Obsidian-Vault unter `03 Bereiche/YouTube Transkripte/` abgelegt. Nach der `## Zusammenfassung` folgt der Abschnitt `## Aus der Videobeschreibung` (Zusammenfassung + Links-Liste), dann `## Einordnung`.
 
 **Dateiname:** Titel des Videos in normaler Schreibweise, z. B. `Zwanzig Claude-Code-Tricks.md`
 
@@ -29,7 +31,7 @@ Seit dem Umbau (2026-11): **keine Base64-Bilder und kein Inline-`<style>` mehr.*
 
 Ablauf:
 1. **Slug** wählen (Kebab-Case, beschreibend, z. B. `zwanzig-claude-code-tricks`).
-2. Claude schreibt eine kleine **JSON-Inhaltsdatei** `<slug>.json` (Schema steht im Kopf von `_vorlage/neue-seite.py`: `slug, video_id, title, channel, duration_min, date` = Ablagedatum, `category, sr_summary, lede, kontext_intro?, clusters[]→tricks{title,time,body}, kontext_outro?`). Das ist die eigentliche Zusammenfassung; `body`/`lede`/`text` dürfen Inline-HTML enthalten (`<strong>`, `<span class="inline-code">`), `&` als `&amp;` schreiben.
+2. Claude schreibt eine kleine **JSON-Inhaltsdatei** `<slug>.json` (Schema steht im Kopf von `_vorlage/neue-seite.py`: `slug, video_id, title, channel, duration_min, date` = Ablagedatum, `category, sr_summary, lede, kontext_intro?, beschreibung?{summary, links[]{title,url}}, clusters[]→tricks{title,time,body}, kontext_outro?`). `beschreibung` ist der Block aus der Videobeschreibung (Zusammenfassung max. 8 Sätze + nur relevante Links). Das ist die eigentliche Zusammenfassung; `body`/`lede`/`text` dürfen Inline-HTML enthalten (`<strong>`, `<span class="inline-code">`), `&` als `&amp;` schreiben.
 3. Aus `YouTube-VideoTranskripte/` aufrufen:
    ```bash
    python _vorlage/neue-seite.py <slug>.json

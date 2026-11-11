@@ -333,6 +333,17 @@ def main() -> int:
             "`--detail token-burner` to keep every scene-change frame across the whole video."
         )
 
+    desc = (info.get("description") or "").strip()
+    if desc:
+        print()
+        print("## Description")
+        print()
+        print("_Raw YouTube description — source for the description summary and the relevant links._")
+        print()
+        print("```")
+        print(desc)
+        print("```")
+
     print()
     print("## Frames")
     print()

@@ -74,6 +74,14 @@ h3{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-s
 }
 .kontextbox strong{color:var(--ink);font-weight:500;}
 
+.beschreibung{margin-bottom:2.75rem;}
+.beschreibung h2{font-size:14px;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.6rem;font-weight:500;}
+.beschreibung p{font-size:15px;color:var(--ink-soft);max-width:62ch;margin:0 0 0.9rem;}
+.desc-links{list-style:none;margin:0;padding:0;border-top:0.5px solid var(--line);}
+.desc-links li{border-bottom:0.5px solid var(--line);padding:0;}
+.desc-links a{display:block;font-size:14.5px;color:var(--ink-soft);text-decoration:none;padding:7px 0;}
+.desc-links a:hover{color:var(--accent-deep);}
+
 .toc{border-top:0.5px solid var(--line-strong);border-bottom:0.5px solid var(--line-strong);padding:1rem 0;margin-bottom:3rem;}
 .toc-label{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:0.6rem;}
 .toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 1.5rem;}

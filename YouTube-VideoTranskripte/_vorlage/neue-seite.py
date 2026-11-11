@@ -23,6 +23,10 @@ JSON-Schema (Pflicht: slug, video_id, title, channel, duration_min, date, catego
   "sr_summary": "Screenreader-Kurzbeschreibung ...",
   "lede": "Ein bis zwei Saetze Einleitung (darf Inline-HTML enthalten).",
   "kontext_intro": {"strong": "Roter Faden:", "text": "..."},   // optional
+  "beschreibung": {                                              // optional, Block nach dem Roter Faden
+    "summary": "Zusammenfassung der YouTube-Beschreibung, max. 8 Saetze (Inline-HTML erlaubt).",
+    "links": [{"title": "Projekt/Tool/Quelle", "url": "https://..."}]  // nur relevante Links,
+  },                                                             // KEINE Eigenwerbung/Social-Media/Affiliate
   "clusters": [
     {"title": "Die neue Struktur", "range": "01-05", "tricks": [
       {"title": "Zwei Bereiche", "time": "1:23", "body": "Fliesstext, Inline-HTML erlaubt."}
@@ -62,6 +66,24 @@ def kontextbox(k):
     text = k.get("text", "")
     inner = (f"<strong>{strong}</strong> " if strong else "") + text
     return f'<div class="kontextbox">\n    {inner}\n  </div>'
+
+
+def beschreibung(b):
+    """Block aus der YouTube-Beschreibung: Zusammenfassung (max. 8 Saetze) + relevante Links.
+    Eigenwerbung/Social-Media/Affiliate-Links gehoeren nicht hierher (vom Agenten vorab gefiltert).
+    """
+    if not b:
+        return ""
+    summary = b.get("summary", "")
+    links = b.get("links") or []
+    link_items = "\n".join(
+        f'      <li><a href="{l["url"]}" target="_blank" rel="noopener">{l["title"]}</a></li>'
+        for l in links if l.get("url") and l.get("title")
+    )
+    links_html = (f'\n    <ul class="desc-links">\n{link_items}\n    </ul>' if link_items else "")
+    summary_html = f'\n    <p>{summary}</p>' if summary else ""
+    return (f'<section class="beschreibung">\n'
+            f'    <h2>Aus der Videobeschreibung</h2>{summary_html}{links_html}\n  </section>')
 
 
 def render(data):
@@ -107,6 +129,7 @@ def render(data):
         "{{SR_SUMMARY}}": data.get("sr_summary", data["title"]),
         "{{LEDE}}": data.get("lede", ""),
         "{{KONTEXT_INTRO}}": kontextbox(data.get("kontext_intro")),
+        "{{BESCHREIBUNG}}": beschreibung(data.get("beschreibung")),
         "{{TOC}}": "\n".join(toc_lines),
         "{{CLUSTERS}}": "\n\n".join(cluster_blocks),
         "{{KONTEXT_OUTRO}}": kontextbox(data.get("kontext_outro")),
