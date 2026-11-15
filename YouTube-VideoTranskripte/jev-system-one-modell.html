@@ -1,0 +1,203 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jev: Das kann das KI-Modell wirklich (10 Use Cases)</title>
+<link rel="stylesheet" href="assets/feldbuch.css">
+
+<div class="wrap">
+  <h2 class="sr-only">Erklaervideo zu Jev, einem KI-Modell von TypeSafe, das keinen Text schreibt, sondern Text klassifiziert und direkt eine Entscheidung plus Wahrscheinlichkeit zurueckgibt. Technik, Einsatzfaelle, Grenzen und die lokale Alternative Laya.</h2>
+
+  <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;border-bottom:0.5px solid currentColor;">Selbststudium</a> &middot; Video-Transkript</p>
+  <h1>Jev: Das kann das KI-Modell wirklich (10 Use Cases)</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/CenkPFVn-vo" target="_blank" rel="noopener">
+      <img class="source-thumb" src="assets/thumbs/jev-system-one-modell.jpg" alt="Vorschaubild: Jev: Das kann das KI-Modell wirklich (10 Use Cases)">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/CenkPFVn-vo" target="_blank" rel="noopener">&bdquo;Jev: Das kann das KI-Modell wirklich (10 Use Cases)&ldquo;</a>
+      &middot; Julian Ivanov | KI-Automatisierung &middot; 25 Min &middot; automatisch transkribiert
+    </p>
+  </div>
+  <p class="lede">
+    <strong>Jev</strong> von TypeSafe schreibt keinen Text, sondern <strong>liest und klassifiziert</strong> ihn &ndash; in Millisekunden, fuer Bruchteile eines Cents. Es liefert direkt eine strukturierte Entscheidung plus eine kalibrierte Wahrscheinlichkeit, mit der dein Code weiterrechnet.
+  </p>
+
+  <div class="kontextbox">
+    <strong>Roter Faden:</strong> Sprachmodell schreibt, Jev entscheidet, dein Code fuehrt aus. Jev ersetzt keine Sprachmodelle, sondern uebernimmt die vielen kleinen Klassifikationsentscheidungen, fuer die ein LLM zu langsam oder zu teuer ist.
+  </div>
+
+  <section class="beschreibung">
+    <h2>Aus der Videobeschreibung</h2>
+    <p>Jev liest Text und trifft eine Entscheidung &ndash; in Millisekunden und fuer den Bruchteil eines Cents. Das Video zeigt zwei selbst gebaute Demo-Apps, erklaert die Technik gegenueber alten Klassifikatoren und wann sich der Einsatz lohnt. Danach konkrete Einsatzfaelle: Guardrails und Model-Routing im Support-Bot, Browser-Automationen, SEO-Audits und Werbeanzeigen-Urteile in einer halben Minute. Dazu die Grenzen (kein Rechnen, kein freier Text, 64k Token, Englisch stark) und der Datenschutz (US-Anbieter). Am Ende Laya, ein offenes Modell zum Selbstbetreiben. Genutzt wird Jev ueber OpenRouter (als typesafe/jev-1.13), gebaut wurden die Apps mit Claude Code. Eigenwerbung (Community/Ressourcen-Hub/Business-Mail) ist hier weggelassen.</p>
+    <p class="desc-links-title">Links aus Beschreibung</p>
+    <ul class="desc-links">
+      <li><a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev" target="_blank" rel="noopener">TypeSafe – Ankündigung von Jev (System One Models)</a></li>
+      <li><a href="https://docs.typesafe.ai/introduction/quickstart" target="_blank" rel="noopener">Jev – Dokumentation (Quickstart)</a></li>
+      <li><a href="https://openrouter.ai/" target="_blank" rel="noopener">OpenRouter (Jev als typesafe/jev-1.13)</a></li>
+      <li><a href="https://github.com/browser-use/jev-ultrafast" target="_blank" rel="noopener">Browser Use – Jev Ultrafast (GitHub)</a></li>
+      <li><a href="https://madewithjev.com" target="_blank" rel="noopener">Made with Jev – über 200 Projekte</a></li>
+      <li><a href="https://huggingface.co/convaiinnovations/laya" target="_blank" rel="noopener">Laya – offenes Modell (Hugging Face)</a></li>
+      <li><a href="https://flowtivity.ai/blog/laya-open-source-jev-alternative/" target="_blank" rel="noopener">Laya vs. Jev – Benchmark</a></li>
+      <li><a href="https://systemonemodels.org/examples/alternatives/" target="_blank" rel="noopener">Übersicht offener System-One-Alternativen</a></li>
+      <li><a href="https://claude.com/claude-code" target="_blank" rel="noopener">Claude Code</a></li>
+    </ul>
+  </section>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Inhalt</p>
+    <div class="toc-grid">
+      <a href="#t1"><span class="n">01</span>Ein Modell, das nicht schreibt</a>
+      <a href="#t2"><span class="n">02</span>Wer dahinter steckt: System One</a>
+      <a href="#t3"><span class="n">03</span>Demo 1: 180 Emojis in Echtzeit</a>
+      <a href="#t4"><span class="n">04</span>Demo 2: Wikipedia-Spiel im Browser</a>
+      <a href="#t5"><span class="n">05</span>Sprachmodell gegen Jev</a>
+      <a href="#t6"><span class="n">06</span>Drei Fragetypen + kalibrierte Confidence</a>
+      <a href="#t7"><span class="n">07</span>Was wirklich neu ist</a>
+      <a href="#t8"><span class="n">08</span>Wann sich Jev lohnt</a>
+      <a href="#t9"><span class="n">09</span>Guardrail und Model-Router im Support-Bot</a>
+      <a href="#t10"><span class="n">10</span>Erste Woche: X-Feed, Werbeblocker, Doom</a>
+      <a href="#t11"><span class="n">11</span>Browser-Automation mit Jev Ultrafast</a>
+      <a href="#t12"><span class="n">12</span>Grosse Datenmengen: Paper, SEO, Ads</a>
+      <a href="#t13"><span class="n">13</span>Zugang über OpenRouter, Arbeitsteilung</a>
+      <a href="#t14"><span class="n">14</span>Was Jev nicht kann</a>
+      <a href="#t15"><span class="n">15</span>Datenschutz und Laya als lokale Alternative</a>
+      <a href="#t16"><span class="n">16</span>Fazit: Richtung der Zukunft</a>
+    </div>
+  </nav>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Was Jev ist</h2><span class="cluster-range">Grundlagen</span></div>
+    <div class="trick" id="t1">
+      <span class="trick-num">01</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Ein Modell, das nicht schreibt</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=0" target="_blank" rel="noopener">ab 0:00</a></div>
+        <p>Jev produziert keinen Text, sondern klassifiziert ihn &ndash; tausendfach in Millisekunden. Laut TypeSafe bis zu 200&times; schneller und 400&times; guenstiger als ein Sprachmodell. Zurueck kommt direkt eine strukturierte Entscheidung plus eine Wahrscheinlichkeit.</p>
+      </div>
+    </div>
+    <div class="trick" id="t2">
+      <span class="trick-num">02</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Wer dahinter steckt: System One</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=45" target="_blank" rel="noopener">ab 0:45</a></div>
+        <p>TypeSafe nennt Jev ein &laquo;System One Model&raquo; (Kahneman: System 1 = schnelles Bauchgefuehl, System 2 = Reasoning). Gegruendet von Diego Almeida, Ex-OpenAI und Hauptautor des InstructGPT-Papers. Idee: Automationen brauchen oft keine Textantwort, sondern eine Entscheidung.</p>
+      </div>
+    </div>
+    <div class="trick" id="t3">
+      <span class="trick-num">03</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Demo 1: 180 Emojis in Echtzeit</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=137" target="_blank" rel="noopener">ab 2:17</a></div>
+        <p>Tippt man einen Text, waehlt Jev in Echtzeit alle passenden Emojis aus (Schwelle 60&nbsp;%). Es laufen 180 parallele Anfragen gleichzeitig &ndash; fuer jedes Emoji wird separat gefragt, ob es passt.</p>
+      </div>
+    </div>
+    <div class="trick" id="t4">
+      <span class="trick-num">04</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Demo 2: Wikipedia-Spiel im Browser</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=228" target="_blank" rel="noopener">ab 3:48</a></div>
+        <p>Jev liest alle Links einer Seite und bewertet, welcher am ehesten zum Zielwort fuehrt. Von &laquo;Kartoffel&raquo; zu &laquo;kuenstliche Intelligenz&raquo; in 6,6&nbsp;Sekunden &ndash; 1.688 Links ausgewertet fuer 0,14&nbsp;Cent.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Wie es funktioniert</h2><span class="cluster-range">Technik</span></div>
+    <div class="trick" id="t5">
+      <span class="trick-num">05</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Sprachmodell gegen Jev</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=341" target="_blank" rel="noopener">ab 5:41</a></div>
+        <p>Ein Sprachmodell schreibt Token fuer Token (selbst ein ja/nein), kostet Zeit und Output-Tokens. Jev bekommt die Frage wie einen Funktionsaufruf: rein geht der State plus Fragen mit fester Antwortform, Jev fuellt die Werte direkt ein. ~0,1&nbsp;s, nur Input-Tokens (~4,2&nbsp;Cent/Mio.), Output gratis.</p>
+      </div>
+    </div>
+    <div class="trick" id="t6">
+      <span class="trick-num">06</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Drei Fragetypen + kalibrierte Confidence</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=449" target="_blank" rel="noopener">ab 7:29</a></div>
+        <p>Choice (bis 225 Optionen), Score (Skala in Worten) und Bool (ja/nein). Zu jeder Antwort eine Confidence, die &ndash; anders als bei Sprachmodellen &ndash; kalibriert ist (Reinforcement Learning for Calibrated Decisions): 90&nbsp;% heisst wirklich 9 von 10 richtig. Empfehlung: &gt;0,9 automatisch, &lt;0,5 an den Menschen.</p>
+      </div>
+    </div>
+    <div class="trick" id="t7">
+      <span class="trick-num">07</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Was wirklich neu ist</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=544" target="_blank" rel="noopener">ab 9:04</a></div>
+        <p>Alte Klassifikatoren mussten je auf eine Aufgabe trainiert werden; Sprachmodelle sind universell, aber langsam/teuer. Jev kombiniert beides: ein Modell, das jede in Worten gestellte Einordnungsfrage beantwortet &ndash; zum Tempo und Preis eines kleinen Klassifikators, ohne Fine-Tuning.</p>
+      </div>
+    </div>
+    <div class="trick" id="t8">
+      <span class="trick-num">08</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Wann sich Jev lohnt</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=632" target="_blank" rel="noopener">ab 10:32</a></div>
+        <p>Nur bei grossen Datenmengen und Echtzeit-Entscheidungen. Livechat: tausende Nachrichten/Sekunde auf Spam pruefen in ~100&nbsp;ms. Beim einmaligen Sortieren von 500&ndash;2000 Mails ist der Vorteil gering; er zaehlt bei 50.000+ Mails oder riesigen Datenbanken.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Einsatzfälle</h2><span class="cluster-range">Use Cases</span></div>
+    <div class="trick" id="t9">
+      <span class="trick-num">09</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Guardrail und Model-Router im Support-Bot</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=767" target="_blank" rel="noopener">ab 12:47</a></div>
+        <p>Statt ein zweites Sprachmodell als Richter (LLM as a judge) prueft Jev jede Bot-Antwort in Sekundenbruchteilen (Guardrail). Als Model-Router entscheidet es einfach vs. kompliziert, blockiert Prompt-Injections und prueft, ob eine Aktion wirklich ausgefuehrt werden soll.</p>
+      </div>
+    </div>
+    <div class="trick" id="t10">
+      <span class="trick-num">10</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Erste Woche: X-Feed, Werbeblocker, Doom</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=876" target="_blank" rel="noopener">ab 14:36</a></div>
+        <p>Nate Herk markiert interessante X-Beitraege live; ein Werbeblocker wirft Elemente ueber 70&nbsp;% von der Seite; manche lassen Jev sogar Doom spielen. Wichtig: Jev sieht das Bild nicht, es liest nur den Code (kein Vision-Modell).</p>
+      </div>
+    </div>
+    <div class="trick" id="t11">
+      <span class="trick-num">11</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Browser-Automation mit Jev Ultrafast</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=976" target="_blank" rel="noopener">ab 16:16</a></div>
+        <p>Browser Use hat Jev Ultrafast veroeffentlicht (&gt;17.000 Sterne in Woche 1). Der Code nummeriert klickbare Elemente durch, Jev sagt nur Nummer + Aktion, ein kleines Sprachmodell tippt. Google-Flights Zuerich&rarr;London in 7&nbsp;Sekunden fuer unter einen halben Cent.</p>
+      </div>
+    </div>
+    <div class="trick" id="t12">
+      <span class="trick-num">12</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Grosse Datenmengen: Paper, SEO, Ads</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=1052" target="_blank" rel="noopener">ab 17:32</a></div>
+        <p>108 Paper in 24 Themen fuer 8&nbsp;Cent (Hassan); tausende SEO-Unterseiten als Einzelurteile (Ira); 30 erfundene Kundentypen &times; 700 Anzeigen = 20.000 Entscheidungen in einer halben Minute fuer 22&nbsp;Cent (Matthew); 724 Anzeigen von 37 Brands in 40&nbsp;Sekunden fuer 9&nbsp;Cent.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Grenzen & Fazit</h2><span class="cluster-range">Praxis</span></div>
+    <div class="trick" id="t13">
+      <span class="trick-num">13</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Zugang über OpenRouter, Arbeitsteilung</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=1173" target="_blank" rel="noopener">ab 19:33</a></div>
+        <p>Merksatz: Sprachmodell schreibt, Jev entscheidet, Code fuehrt aus. Alles Handelnde (Mail senden, Zahlung) bleibt im Code hinter Schwellen. Zugang am einfachsten ueber OpenRouter (typesafe/jev-1.13); die Demo-Apps wurden mit Claude Code gebaut.</p>
+      </div>
+    </div>
+    <div class="trick" id="t14">
+      <span class="trick-num">14</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Was Jev nicht kann</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=1230" target="_blank" rel="noopener">ab 20:30</a></div>
+        <p>Kein mehrschrittiges Denken, kein Rechnen/Zaehlen, keine Datumsvergleiche, kein freier Text, keine Bilder/Ton. Kontext-Limit 64.000 Tokens. Haupttrainingssprache Englisch &ndash; Deutsch schwaecher. Achtung vor eingeschleusten Anweisungen im State; klare Kriterien definieren.</p>
+      </div>
+    </div>
+    <div class="trick" id="t15">
+      <span class="trick-num">15</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Datenschutz und Laya als lokale Alternative</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=1350" target="_blank" rel="noopener">ab 22:30</a></div>
+        <p>TypeSafe ist US-Anbieter, Daten auf US-Servern, &laquo;nichts gespeichert&raquo; nur Enterprise. Alternative: Laya, ein offenes Modell (Hugging Face, lokal betreibbar) &ndash; schneller, aber nicht universell: braucht Training auf die eigene Aufgabe, max. ~20 Kategorien, 512&ndash;1024 Token Kontext.</p>
+      </div>
+    </div>
+    <div class="trick" id="t16">
+      <span class="trick-num">16</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Fazit: Richtung der Zukunft</p><a class="trick-time" href="https://youtu.be/CenkPFVn-vo?t=1444" target="_blank" rel="noopener">ab 24:04</a></div>
+        <p>Ein KI-Modell muss keinen Text schreiben, um nuetzlich zu sein. Jev ersetzt Sprachmodelle nicht, sondern ist eine zweite Art Modell fuer die vielen kleinen Entscheidungen, fuer die ein LLM zu langsam oder zu teuer waere.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="kontextbox">
+    <strong>Fazit:</strong> Starkes Muster fuer Automationen (Guardrail, Router, Massen-Klassifikation), aber Hersteller-Zahlen sind ungeprueft, Deutsch ist schwaecher und der US-Datenschutz ist ein echtes K.-o.-Kriterium &ndash; fuer sensible Daten ist Laya (lokal) der ernstzunehmende Weg.
+  </div>
+
+  <footer>
+    Zusammengefasst aus dem Video-Transkript f&uuml;r das Selbststudium &middot;
+    <a href="https://youtu.be/CenkPFVn-vo" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>
