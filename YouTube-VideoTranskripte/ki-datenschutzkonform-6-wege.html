@@ -1,0 +1,173 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>So nutzt du Claude Code & KI-Modelle datenschutzkonform (6 Moeglichkeiten)</title>
+<link rel="stylesheet" href="assets/feldbuch.css">
+
+<div class="wrap">
+  <h2 class="sr-only">Zusammenfassung des deutschen Tutorials von Julian Ivanov ueber sechs Wege, KI-Modelle im Unternehmen datenschutzkonform einzusetzen - von den US-Anbietern ueber EU-Regionen, souveraene Clouds und europaeische Anbieter bis zu gemieteter GPU und lokalem Modell, inklusive Claude Code mit Kundendaten.</h2>
+
+  <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;border-bottom:0.5px solid currentColor;">Selbststudium</a> &middot; Video-Transkript</p>
+  <h1>So nutzt du Claude Code & KI-Modelle datenschutzkonform (6 Moeglichkeiten)</h1>
+  <div class="source-card">
+    <a href="https://youtu.be/4WLCG1uLZD4" target="_blank" rel="noopener">
+      <img class="source-thumb" src="assets/thumbs/ki-datenschutzkonform-6-wege.jpg" alt="Vorschaubild: So nutzt du Claude Code & KI-Modelle datenschutzkonform (6 Moeglichkeiten)">
+    </a>
+    <p class="source-line">
+      Quelle: <a href="https://youtu.be/4WLCG1uLZD4" target="_blank" rel="noopener">&bdquo;So nutzt du Claude Code & KI-Modelle datenschutzkonform (6 Moeglichkeiten)&ldquo;</a>
+      &middot; Julian Ivanov | KI-Automatisierung &middot; 27 Min &middot; automatisch transkribiert
+    </p>
+  </div>
+  <p class="lede">
+    Orientierung, wie man KI-Modelle im Unternehmen aus Datenschutz-Sicht einsetzt: sechs Wege als <strong>Treppe</strong> &ndash; je weiter runter, desto mehr Kontrolle ueber die Daten, aber tendenziell schwaechere Modelle und mehr Aufwand. Durchgaengiges Beispiel ist eine Kundenmail mit Name und Adresse.
+  </p>
+
+  <div class="kontextbox">
+    <strong>Roter Faden:</strong> Entscheidend sind zwei Fragen &ndash; <em>wohin</em> gehen die Eingaben und <em>was</em> macht der Anbieter damit (Speicherung/Training)? Je sensibler die Daten, desto weiter runter auf der Treppe; Wege lassen sich auch je nach Datenart kombinieren. Ausdruecklich <strong>keine Rechtsberatung</strong>, nur die technischen Voraussetzungen &ndash; Datenschutzerklaerung und Informationspflichten kommen separat dazu.
+  </div>
+
+  <section class="beschreibung">
+    <h2>Aus der Videobeschreibung</h2>
+    <p>Darf man KI-Modelle von OpenAI, Anthropic oder Google mit Kundendaten nutzen, und was passiert dabei mit den Daten? Das Video geht sechs Wege durch, KI im Unternehmen datenschutzkonform aufzusetzen: direkt bei den US-Anbietern, dieselben Modelle in einer EU-Region, souveraene Clouds, europaeische Anbieter wie Mistral und Scaleway, eine gemietete Grafikkarte und ein Modell auf dem eigenen Rechner. Fuer jeden Weg wird gezeigt, wohin die Daten gehen, was er kostet und wie gut die Modelle sind. Dazu: wie man Claude Code mit Kundendaten nutzt und wie man ein lokales Modell testet, bevor man teure Hardware kauft. Ausdruecklich keine Rechtsberatung, sondern Orientierung fuer die technische Seite.</p>
+    <p class="desc-links-title">Links aus Beschreibung</p>
+    <ul class="desc-links">
+      <li><a href="https://aws.amazon.com/bedrock/" target="_blank" rel="noopener">Amazon Bedrock</a></li>
+      <li><a href="https://azure.microsoft.com/products/ai-foundry" target="_blank" rel="noopener">Microsoft Azure AI Foundry</a></li>
+      <li><a href="https://mistral.ai" target="_blank" rel="noopener">Mistral</a></li>
+      <li><a href="https://www.scaleway.com/en/generative-apis/" target="_blank" rel="noopener">Scaleway Generative APIs</a></li>
+      <li><a href="https://openrouter.ai" target="_blank" rel="noopener">OpenRouter</a></li>
+      <li><a href="https://www.runpod.io" target="_blank" rel="noopener">RunPod</a></li>
+      <li><a href="https://www.hetzner.com" target="_blank" rel="noopener">Hetzner</a></li>
+    </ul>
+  </section>
+
+  <nav class="toc" aria-label="Inhalt">
+    <p class="toc-label">Inhalt</p>
+    <div class="toc-grid">
+      <a href="#t1"><span class="n">01</span>Modell vs. Plattform & die zwei Fragen</a>
+      <a href="#t2"><span class="n">02</span>Datenarten & US Cloud Act</a>
+      <a href="#t3"><span class="n">03</span>OpenAI / Anthropic / Google via API</a>
+      <a href="#t4"><span class="n">04</span>EU Data Zone bei Azure/AWS/Google</a>
+      <a href="#t5"><span class="n">05</span>Sonderfall Claude Code mit Kundendaten</a>
+      <a href="#t6"><span class="n">06</span>EU-Betrieb getrennt vom Konzern</a>
+      <a href="#t7"><span class="n">07</span>Mistral, Scaleway & Co. via API</a>
+      <a href="#t8"><span class="n">08</span>Tipp: OpenRouter mit EU-Variante</a>
+      <a href="#t9"><span class="n">09</span>Grafikkarte mieten, Modell selbst betreiben</a>
+      <a href="#t10"><span class="n">10</span>Modell lokal laufen lassen</a>
+      <a href="#t11"><span class="n">11</span>Erst testen, dann Hardware kaufen</a>
+    </div>
+  </nav>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Grundlagen vorab</h2><span class="cluster-range">ab 1:47</span></div>
+    <div class="trick" id="t1">
+      <span class="trick-num">01</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Modell vs. Plattform & die zwei Fragen</p><a class="trick-time" href="https://youtu.be/4WLCG1uLZD4?t=107" target="_blank" rel="noopener">ab 1:47</a></div>
+        <p>ChatGPT ist die Plattform, das Modell dahinter spricht man im Unternehmen meist ueber die <strong>API</strong> an. Fuer den Datenschutz zaehlt: <em>Wohin</em> gehen die Eingaben und <em>was</em> macht der Anbieter damit? Bei bezahlten APIs/Business-Vertraegen wird laut Anbietern nicht trainiert, aber ~30 Tage gespeichert. Personenbezogene Daten brauchen einen <strong>AVV</strong>; bei Uebermittlung ausserhalb der EU zusaetzlich <strong>Standardvertragsklauseln (SCC)</strong>.</p>
+      </div>
+    </div>
+    <div class="trick" id="t2">
+      <span class="trick-num">02</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Datenarten & US Cloud Act</p><a class="trick-time" href="https://youtu.be/4WLCG1uLZD4?t=232" target="_blank" rel="noopener">ab 3:52</a></div>
+        <p>Oeffentliche Inhalte sind unkritisch, interne Infos will man evtl. nicht zum Training freigeben, personenbezogene Daten brauchen einen AVV, sensible Daten (Gesundheit/Finanzen) noch mehr Kontrolle. Der <strong>US Cloud Act</strong> kann US-Firmen zur Datenherausgabe verpflichten (auch bei EU-Hosting) &ndash; laut Autor fuer normale Unternehmen eher ein theoretisches Restrisiko (gilt auch fuer Microsoft 365).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Weg 1: Direkt bei den US-Anbietern</h2><span class="cluster-range">ab 4:49</span></div>
+    <div class="trick" id="t3">
+      <span class="trick-num">03</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">OpenAI / Anthropic / Google via API</p><a class="trick-time" href="https://youtu.be/4WLCG1uLZD4?t=289" target="_blank" rel="noopener">ab 4:49</a></div>
+        <p>Modelle direkt bei den US-Anbietern ueber deren API. Keine Zero Data Retention; Daten landen in den USA (US-Recht) &rarr; <strong>AVV + SCC</strong> noetig. Rechtlich die groesste Angriffsflaeche, aber nicht verboten (viele nutzen teure Enterprise-Plaene). Dafuer die staerksten Modelle und der geringste Aufwand; fuer Daten ohne Personenbezug problemlos.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Weg 2: Gleiche Modelle in EU-Region</h2><span class="cluster-range">ab 5:48</span></div>
+    <div class="trick" id="t4">
+      <span class="trick-num">04</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">EU Data Zone bei Azure/AWS/Google</p><a class="trick-time" href="https://youtu.be/4WLCG1uLZD4?t=348" target="_blank" rel="noopener">ab 5:48</a></div>
+        <p>Dieselben Modelle, aber in einer EU-Region &ndash; Verarbeitung im EU-Rechenzentrum, Vertrag mit dem Konzern, kein Training mit deinen Daten. Beispiel <strong>Azure OpenAI</strong> mit <strong>EU Data Zone</strong> (GPT-5 verfuegbar) &ndash; unbedingt die EU Data Zone waehlen. Pragmatischster Mittelweg; Haken: Vertragspartner bleibt US-Konzern, neueste Modelle kommen in der EU teils spaeter.</p>
+      </div>
+    </div>
+    <div class="trick" id="t5">
+      <span class="trick-num">05</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Sonderfall Claude Code mit Kundendaten</p><a class="trick-time" href="https://youtu.be/4WLCG1uLZD4?t=436" target="_blank" rel="noopener">ab 7:16</a></div>
+        <p><strong>Abos</strong> (Free/Pro/Max/Ultra) laufen unter Verbraucherbedingungen &ndash; kein AVV, Training standardmaessig an (abschaltbar, empfohlen); damit nur eigene Projekte oder Testdaten. Beim Bauen mit Testdaten arbeiten (die fertige App hat spaeter eigenen Modell-Zugriff). Fuer <strong>echte Kundendaten</strong>: Team/Enterprise-Plan oder API-Key aus der Anthropic-Konsole &rarr; kein Training, AVV (Data Processing Addendum) inkl. SCC automatisch dabei &ndash; aber Verarbeitung in den USA. Fuer EU-Hosting die Claude-Modelle ueber <strong>Amazon Bedrock</strong> (Region Frankfurt) an Claude Code haengen (Claude Code ist nur ein austauschbares Agent Harness). Haken: Bedrock pro Token, EU +10 %, keine Fable-Reihe (nur Opus/Sonnet/Haiku). Verarbeitest du Daten im Auftrag deines Kunden, braucht ihr untereinander ebenfalls einen AVV und fuehrt den KI-Anbieter als Untervertragsverarbeiter auf.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Weg 3: Souveraene Clouds</h2><span class="cluster-range">ab 14:01</span></div>
+    <div class="trick" id="t6">
+      <span class="trick-num">06</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">EU-Betrieb getrennt vom Konzern</p><a class="trick-time" href="https://youtu.be/4WLCG1uLZD4?t=841" target="_blank" rel="noopener">ab 14:01</a></div>
+        <p>Ein grosser Anbieter betreibt eine EU-Cloud getrennt vom Konzern (eigene Gesellschaft, Personal in Europa) &ndash; geht weiter als Weg 2. Am weitesten: <strong>AWS European Sovereign Cloud</strong> (Brandenburg, seit Jahresanfang); fuer DE angekuendigt SAP + OpenAI ueber die SAP-Tochter Delos. Modellauswahl noch klein (Amazon-eigene + offene wie Gemma), keine GPT-/Claude-Spitzenmodelle; gehoert am Ende trotzdem zu Amazon. Noch stark in Entwicklung, aber beobachtenswert.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Weg 4: Europaeische Anbieter direkt</h2><span class="cluster-range">ab 15:17</span></div>
+    <div class="trick" id="t7">
+      <span class="trick-num">07</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Mistral, Scaleway & Co. via API</p><a class="trick-time" href="https://youtu.be/4WLCG1uLZD4?t=917" target="_blank" rel="noopener">ab 15:17</a></div>
+        <p>API direkt bei EU-Anbietern: <strong>Mistral</strong> (FR), Ionos und Stackit (DE), <strong>Scaleway</strong> (FR) &ndash; Verarbeitung in der EU, Vertragspartner in der EU, DSGVO. Scaleway betreibt offene Modelle (GPT-OSS, Qwen, GLM, DeepSeek) und speichert Eingaben standardmaessig nicht. Wichtig: Bei offenen Modellen gehen die Daten an Scaleway (Paris), nicht an den chinesischen Hersteller (ein Modell ist nur eine Datei). Chinesische Modelle sehr guenstig &amp; stark (grosses Qwen ~0,60/3,60 &euro; pro Mio. Token, Mistral Small 0,15/0,35 &euro; &ndash; vgl. Claude Sonnet 5.5 $10, Fable 5.1 $50). Fuer Automatisierungen reichen kleinere Modelle.</p>
+      </div>
+    </div>
+    <div class="trick" id="t8">
+      <span class="trick-num">08</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Tipp: OpenRouter mit EU-Variante</p><a class="trick-time" href="https://youtu.be/4WLCG1uLZD4?t=1071" target="_blank" rel="noopener">ab 17:51</a></div>
+        <p><strong>OpenRouter</strong> (US-Dienst, EU-Variante im Businessplan) gibt mit einem Zugang hunderte Modelle &ndash; EU-only-Routing (Fehlermeldung statt heimlich USA), Zero-Data-Retention-Filter, speichert Prompts standardmaessig nicht. Bequem, um verschiedene Modelle ohne eigenen Vertrag pro Anbieter zu nutzen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Weg 5: Eigener GPU-Server (gemietet)</h2><span class="cluster-range">ab 18:43</span></div>
+    <div class="trick" id="t9">
+      <span class="trick-num">09</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Grafikkarte mieten, Modell selbst betreiben</p><a class="trick-time" href="https://youtu.be/4WLCG1uLZD4?t=1123" target="_blank" rel="noopener">ab 18:43</a></div>
+        <p>GPU-Server mieten (Hetzner, Scaleway, <strong>RunPod</strong>) und Modelle selbst betreiben &ndash; Daten gehen nur an den Hardware-Vermieter. Scaleway H100 ~2,70 &euro;/h; RunPod rechnet pro Sekunde ab (kosteneffizienter, dafuer Cold-Start), bietet eine Secure Cloud fuer sensible Daten, loescht Anfragen nach Abarbeitung (spaetestens 1 Tag statt 30), liefert einen AVV, EU-Region einstellbar. Bei RunPod laedt man jedes <strong>offene</strong> Modell selbst auf die GPU (auch chinesische; geschlossene GPT/Claude nicht). Lohnt bei guter Auslastung und wenn kleinere Modelle reichen.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cluster">
+    <div class="cluster-head"><h2>Weg 6: Lokal auf dem eigenen Rechner</h2><span class="cluster-range">ab 21:11</span></div>
+    <div class="trick" id="t10">
+      <span class="trick-num">10</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Modell lokal laufen lassen</p><a class="trick-time" href="https://youtu.be/4WLCG1uLZD4?t=1271" target="_blank" rel="noopener">ab 21:11</a></div>
+        <p>Hardware kaufen, Modell <strong>lokal</strong> laufen lassen &ndash; die Daten verlassen das Geraet nie, kein Anbieter noetig: der sicherste, aber komplizierteste Weg. Ein Modell ist nur eine riesige Datei aus Milliarden Gewichten; offene Modelle laedt man herunter. Dateien sind gross (am besten im VRAM; gute Heim-GPU ~32 GB) &rarr; kleinere oder <strong>quantisierte</strong> Versionen (kaum Qualitaetsverlust; Qwen-27B schrumpft von 54 auf ~26 GB). Beispiel GPT-OSS 120B auf Nvidia DGX Spark ~50 Token/s, Geraet $3.500&ndash;7.000. Haken: Mehrnutzer teilen die Leistung (gut fuer Hintergrund-Automatisierung, schlecht fuer Chatbots); Kontextfenster offener Modelle meist 128&ndash;256k Token.</p>
+      </div>
+    </div>
+    <div class="trick" id="t11">
+      <span class="trick-num">11</span>
+      <div>
+        <div class="trick-title-row"><p class="trick-title">Erst testen, dann Hardware kaufen</p><a class="trick-time" href="https://youtu.be/4WLCG1uLZD4?t=1450" target="_blank" rel="noopener">ab 24:10</a></div>
+        <p>Vor dem Kauf in zwei Schritten testen: (1) Modell mit Testdaten ueber OpenRouter/Scaleway pruefen, ob es die Aufgabe loest; (2) bei RunPod stundenweise eine vergleichbare GPU mieten und pruefen, ob es laeuft und schnell genug ist. Kostet nur ein paar Euro und verhindert teure Fehlkaeufe.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="kontextbox">
+    <strong>Fazit:</strong> Faustregel: je sensibler die Daten, desto weiter runter auf der Treppe &ndash; und man kann Wege je nach Datenart kombinieren und Anfragen routen. Als Dienstleister ist vieles eine Frage der Kommunikation: Kunden ueber die Moeglichkeiten aufklaeren, entscheiden tut der Kunde. Oft reicht Azure OpenAI in einer EU-Region (den meisten Datenschutzbeauftragten genug). Das sind nur die technischen Voraussetzungen; das Rechtliche drumherum kommt dazu.
+  </div>
+
+  <footer>
+    Zusammengefasst aus dem Video-Transkript f&uuml;r das Selbststudium &middot;
+    <a href="https://youtu.be/4WLCG1uLZD4" target="_blank" rel="noopener">Video ansehen</a>
+  </footer>
+</div>
